@@ -18,10 +18,13 @@ of monthly and annual subscribers were also found using COUNTIFS, and then mutli
 total revenue for the quarter, and divided by the toatl number of users to find the ARPU. The average customer lifetime was given as 365 for all customers in the dataset.
 After the CLV value was found, the value were then extracted into the original table undex INDEX and MATCH formulas. 
 
+![Excel Spreadheet](Spreadsheet.page1.png)
+
+![Excel Spreadheet](Spreadsheet.page2.png)
+
 ## III. Results
 The high-value user segments were found after creating a PivotChart and a PivotTable, and using slicers that allowed us to analyze this data. Using this sgements,
 marketing strategies and policies have been found to imporve customer retention and cost optimization. 
-![](Spreadsheet.page1.png)
-![](Spreadsheet.page2.png)
-![](dashboard.png)
+
+![Dashboard](dashboard.png)
 
