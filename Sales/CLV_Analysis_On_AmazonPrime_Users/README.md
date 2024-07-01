@@ -21,3 +21,7 @@ After the CLV value was found, the value were then extracted into the original t
 ## III. Results
 The high-value user segments were found after creating a PivotChart and a PivotTable, and using slicers that allowed us to analyze this data. Using this sgements,
 marketing strategies and policies have been found to imporve customer retention and cost optimization. 
+![](Spreadsheet.page1.png)
+![](Spreadsheet.page2.png)
+![](dashboard.png)
+
