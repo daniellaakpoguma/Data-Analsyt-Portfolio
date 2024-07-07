@@ -14,6 +14,11 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import NoSuchElementException
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from selenium.common.exceptions import TimeoutException
+from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.options import Options
 import warnings
 warnings.filterwarnings('ignore')
 
@@ -314,18 +319,22 @@ class resume_analyzer:
 
 
 class linkedin_scraper:
-
+   
+    @staticmethod
     def webdriver_setup():
-            
-        options = webdriver.ChromeOptions()
-        options.add_argument('--headless')
-        options.add_argument('--no-sandbox')
-        options.add_argument('--disable-dev-shm-usage')
+        chrome_options = Options()
+        chrome_options.add_argument('--headless')
+        chrome_options.add_argument('--no-sandbox')
+        chrome_options.add_argument('--disable-dev-shm-usage')
 
-        driver = webdriver.Chrome(options=options)
+        # Set the path to chromedriver
+        driver_path = '/usr/local/bin/chromedriver'
+        
+        # Initialize the webdriver
+        driver = webdriver.Chrome(driver_path, options=chrome_options)
         driver.maximize_window()
+        
         return driver
-
 
     def get_userinput():
 
@@ -335,10 +344,10 @@ class linkedin_scraper:
             add_vertical_space(1)
             col1,col2,col3 = st.columns([0.5,0.3,0.2], gap='medium')
             with col1:
-                job_title_input = st.text_input(label='Job Title')
-                job_title_input = job_title_input.split(',')
+                keyword_input = st.text_input(label='Keyword')
+                keyword_input = keyword_input.split(',')
             with col2:
-                job_location = st.text_input(label='Job Location', value='India')
+                job_location = st.text_input(label='Job Location', value='North America')
             with col3:
                 job_count = st.number_input(label='Job Count', min_value=1, value=1, step=1)
 
@@ -347,22 +356,21 @@ class linkedin_scraper:
             submit = st.form_submit_button(label='Submit')
             add_vertical_space(1)
         
-        return job_title_input, job_location, job_count, submit
+        return keyword_input, job_location, job_count, submit
 
-
-    def build_url(job_title, job_location):
+    def build_url(keyword, job_location):
 
         b = []
-        for i in job_title:
+        for i in keyword:
             x = i.split()
             y = '%20'.join(x)
             b.append(y)
 
-        job_title = '%2C%20'.join(b)
-        link = f"https://in.linkedin.com/jobs/search?keywords={job_title}&location={job_location}&locationId=&geoId=102713980&f_TPR=r604800&position=1&pageNum=0"
+        keyword = '%2C%20'.join(b)
+        link = f"https://www.linkedin.com/jobs/search?keywords={keyword}&location={job_location}&locationId=&geoId=103644278&f_TPR=r604800&position=1&pageNum=0"
 
         return link
-    
+
 
     def open_link(driver, link):
 
@@ -370,12 +378,15 @@ class linkedin_scraper:
             # Break the Loop if the Element is Found, Indicating the Page Loaded Correctly
             try:
                 driver.get(link)
-                driver.implicitly_wait(5)
+                timeout_value = 10  # Example: set the timeout to 10 seconds
+                driver.implicitly_wait(timeout_value)
                 time.sleep(3)
                 driver.find_element(by=By.CSS_SELECTOR, value='span.switcher-tabs__placeholder-text.m-auto')
                 return
             
             # Retry Loading the Page
+            except TimeoutException as te:
+                st.error(f"Timeout waiting for page to load: {te}")
             except NoSuchElementException:
                 continue
 
@@ -523,60 +534,46 @@ class linkedin_scraper:
             st.markdown(f'<h5 style="text-align: center;color: orange;">No Matching Jobs Found</h5>', 
                                 unsafe_allow_html=True)
 
-
     def main():
-        
+        st.title("LinkedIn Job Scraper")
+
         # Initially set driver to None
         driver = None
         
         try:
+            # Get user input for job title, location, and job count
             job_title_input, job_location, job_count, submit = linkedin_scraper.get_userinput()
-            add_vertical_space(2)
-            
+            st.write(f"Job Title Input: {job_title_input}")
+            st.write(f"Job Location: {job_location}")
+            st.write(f"Job Count: {job_count}")
+
             if submit:
-                if job_title_input != [] and job_location != '':
-                    
-                    with st.spinner('Chrome Webdriver Setup Initializing...'):
+                if job_title_input and job_location:
+                    with st.spinner('Initializing Chrome WebDriver...'):
                         driver = linkedin_scraper.webdriver_setup()
-                                       
-                    with st.spinner('Loading More Job Listings...'):
 
-                        # build URL based on User Job Title Input
+                    with st.spinner('Loading Job Listings...'):
                         link = linkedin_scraper.build_url(job_title_input, job_location)
-
-                        # Open the Link in LinkedIn and Scroll Down the Page
                         linkedin_scraper.link_open_scrolldown(driver, link, job_count)
 
-                    with st.spinner('scraping Job Details...'):
-
-                        # Scraping the Company Name, Location, Job Title and URL Data
+                    with st.spinner('Scraping Job Details...'):
                         df = linkedin_scraper.scrap_company_data(driver, job_title_input, job_location)
+                        df_final = linkedin_scraper.scrap_job_description(driver, df, job_count)
 
-                        # Scraping the Job Descriptin Data
-                        df_final = linkedin_scraper. scrap_job_description(driver, df, job_count)
-                    
-                    # Display the Data in User Interface
                     linkedin_scraper.display_data_userinterface(df_final)
 
-                
-                # If User Click Submit Button and Job Title is Empty
-                elif job_title_input == []:
-                    st.markdown(f'<h5 style="text-align: center;color: orange;">Job Title is Empty</h5>', 
-                                unsafe_allow_html=True)
-                
-                elif job_location == '':
-                    st.markdown(f'<h5 style="text-align: center;color: orange;">Job Location is Empty</h5>', 
-                                unsafe_allow_html=True)
+                else:
+                    if not job_title_input:
+                        st.error("Job Title cannot be empty!")
+                    if not job_location:
+                        st.error("Job Location cannot be empty!")
 
         except Exception as e:
-            add_vertical_space(2)
-            st.markdown(f'<h5 style="text-align: center;color: orange;">{e}</h5>', unsafe_allow_html=True)
-        
+            st.error(f"An error occurred: {e}")
+
         finally:
             if driver:
                 driver.quit()
-
-
 
 # Streamlit Configuration Setup
 streamlit_config()
