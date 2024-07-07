@@ -1,15 +1,12 @@
-import time
-import numpy as np
-import pandas as pd
 import streamlit as st
 import requests
 from bs4 import BeautifulSoup
-from streamlit_extras.add_vertical_space import add_vertical_space
+import pandas as pd
 
 def build_url(keywords, job_location):
     b = ['%20'.join(i.split()) for i in keywords]
     keyword = '%2C%20'.join(b)
-    link = f"https://www.linkedin.com/jobs/search?keywords={keyword}&location={job_location}&locationId=&geoId=103644278&f_TPR=r604800&position=1&pageNum=0"
+    link = f"https://www.linkedin.com/jobs/search?keywords={keyword}&location={job_location}"
     return link
 
 def scrape_job_listings(url, job_count):
@@ -19,57 +16,59 @@ def scrape_job_listings(url, job_count):
     response = requests.get(url, headers=headers)
     soup = BeautifulSoup(response.content, 'html.parser')
 
-    job_titles = [job.text.strip() for job in soup.find_all('h3', class_='base-search-card__title')]
-    company_names = [company.text.strip() for company in soup.find_all('h4', class_='base-search-card__subtitle')]
-    locations = [location.text.strip() for location in soup.find_all('span', class_='job-search-card__location')]
-    job_links = [link['href'] for link in soup.find_all('a', {'data-tracking-control-name': 'public_jobs_jobs-search-card_click'})]
+    joblist = []
+    try:
+        divs = soup.find_all('div', class_='base-search-card__info')
+    except:
+        print("Empty page, no jobs found")
+        return pd.DataFrame()
 
-    print(f"Job Titles: {job_titles}")
-    print(f"Company Names: {company_names}")
-    print(f"Locations: {locations}")
-    print(f"Job Links: {job_links}")
+    for item in divs:
+        title = item.find('h3').text.strip()
+        company = item.find('a', class_='hidden-nested-link')
+        location = item.find('span', class_='job-search-card__location')
+        parent_div = item.parent
+        entity_urn = parent_div['data-entity-urn']
+        job_posting_id = entity_urn.split(':')[-1]
+        job_url = 'https://www.linkedin.com/jobs/view/' + job_posting_id + '/'
 
-    # Print lengths of lists
-    print(f"Length of Job Titles: {len(job_titles)}")
-    print(f"Length of Company Names: {len(company_names)}")
-    print(f"Length of Locations: {len(locations)}")
-    print(f"Length of Job Links: {len(job_links)}")
+        date_tag_new = item.find('time', class_='job-search-card__listdate--new')
+        date_tag = item.find('time', class_='job-search-card__listdate')
+        date = date_tag['datetime'] if date_tag else (date_tag_new['datetime'] if date_tag_new else '')
 
-    # Fill missing values to make lists of the same length
-    max_length = max(len(job_titles), len(company_names), len(locations), len(job_links))
+        job = {
+            'title': title,
+            'company': company.text.strip().replace('\n', ' ') if company else '',
+            'location': location.text.strip() if location else '',
+            'date': date,
+            'job_url': job_url,
+        }
+        joblist.append(job)
 
-    job_titles.extend(['N/A'] * (max_length - len(job_titles)))
-    company_names.extend(['N/A'] * (max_length - len(company_names)))
-    locations.extend(['N/A'] * (max_length - len(locations)))
-    job_links.extend(['N/A'] * (max_length - len(job_links)))
-
-    df = pd.DataFrame({
-        'Job Title': job_titles[:job_count],
-        'Company Name': company_names[:job_count],
-        'Location': locations[:job_count],
-        'Job Link': job_links[:job_count]
-    })
-    return df
+    df = pd.DataFrame(joblist)
+    return df.head(job_count)
 
 def main():
-    st.title("LinkedIn Job Scraper (Without ChromeDriver)")
+    st.title("LinkedIn Job Scraper")
 
     with st.form(key='linkedin_scarp'):
-        add_vertical_space(1)
-        col1, col2, col3 = st.columns([0.5, 0.3, 0.2], gap='medium')
-        with col1:
-            keyword_input = st.text_input(label='Keyword').split(',')
-        with col2:
-            job_location = st.text_input(label='Job Location', value='North America')
-        with col3:
-            job_count = st.number_input(label='Job Count', min_value=1, value=1, step=1)
+        st.header("Search Parameters")
+        keyword_input = st.text_input(label='Keyword (comma-separated)').split(',')
+        job_location = st.text_input(label='Job Location', value='North America')
+        job_count = st.number_input(label='Job Count', min_value=1, value=10, step=1)
         submit = st.form_submit_button(label='Submit')
-        add_vertical_space(1)
 
     if submit and keyword_input and job_location:
         url = build_url(keyword_input, job_location)
         df = scrape_job_listings(url, job_count)
-        st.write(df)
+
+        if not df.empty:
+            st.header("Job Listings")
+            st.write(df)
+
+            st.header("Job Details")
+            for idx, row in df.iterrows():
+                st.markdown(f"[{row['title']} at {row['company']}]({row['job_url']})", unsafe_allow_html=True)
 
 if __name__ == "__main__":
     main()
