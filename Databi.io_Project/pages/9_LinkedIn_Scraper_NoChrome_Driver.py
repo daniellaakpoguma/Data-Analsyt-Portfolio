@@ -6,13 +6,11 @@ import requests
 from bs4 import BeautifulSoup
 from streamlit_extras.add_vertical_space import add_vertical_space
 
-
 def build_url(keywords, job_location):
     b = ['%20'.join(i.split()) for i in keywords]
     keyword = '%2C%20'.join(b)
     link = f"https://www.linkedin.com/jobs/search?keywords={keyword}&location={job_location}&locationId=&geoId=103644278&f_TPR=r604800&position=1&pageNum=0"
     return link
-
 
 def scrape_job_listings(url, job_count):
     headers = {
@@ -21,10 +19,29 @@ def scrape_job_listings(url, job_count):
     response = requests.get(url, headers=headers)
     soup = BeautifulSoup(response.content, 'html.parser')
 
-    job_titles = [job.text for job in soup.find_all('h3', class_='base-search-card__title')]
-    company_names = [company.text for company in soup.find_all('h4', class_='base-search-card__subtitle')]
-    locations = [location.text for location in soup.find_all('span', class_='job-search-card__location')]
+    job_titles = [job.text.strip() for job in soup.find_all('h3', class_='base-search-card__title')]
+    company_names = [company.text.strip() for company in soup.find_all('h4', class_='base-search-card__subtitle')]
+    locations = [location.text.strip() for location in soup.find_all('span', class_='job-search-card__location')]
     job_links = [link['href'] for link in soup.find_all('a', {'data-tracking-control-name': 'public_jobs_jobs-search-card_click'})]
+
+    print(f"Job Titles: {job_titles}")
+    print(f"Company Names: {company_names}")
+    print(f"Locations: {locations}")
+    print(f"Job Links: {job_links}")
+
+    # Print lengths of lists
+    print(f"Length of Job Titles: {len(job_titles)}")
+    print(f"Length of Company Names: {len(company_names)}")
+    print(f"Length of Locations: {len(locations)}")
+    print(f"Length of Job Links: {len(job_links)}")
+
+    # Fill missing values to make lists of the same length
+    max_length = max(len(job_titles), len(company_names), len(locations), len(job_links))
+
+    job_titles.extend(['N/A'] * (max_length - len(job_titles)))
+    company_names.extend(['N/A'] * (max_length - len(company_names)))
+    locations.extend(['N/A'] * (max_length - len(locations)))
+    job_links.extend(['N/A'] * (max_length - len(job_links)))
 
     df = pd.DataFrame({
         'Job Title': job_titles[:job_count],
@@ -33,7 +50,6 @@ def scrape_job_listings(url, job_count):
         'Job Link': job_links[:job_count]
     })
     return df
-
 
 def main():
     st.title("LinkedIn Job Scraper (Without ChromeDriver)")
@@ -54,7 +70,6 @@ def main():
         url = build_url(keyword_input, job_location)
         df = scrape_job_listings(url, job_count)
         st.write(df)
-
 
 if __name__ == "__main__":
     main()

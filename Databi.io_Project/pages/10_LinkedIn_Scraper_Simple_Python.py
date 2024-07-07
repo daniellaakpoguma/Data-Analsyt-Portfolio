@@ -6,6 +6,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import NoSuchElementException, TimeoutException
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.service import Service
 import warnings
 warnings.filterwarnings('ignore')
 
@@ -22,8 +23,11 @@ class LinkedInScraper:
         # Set the path to chromedriver
         driver_path = '/usr/local/bin/chromedriver'
         
+        # Create a service object
+        service = Service(driver_path)
+        
         # Initialize the webdriver
-        driver = webdriver.Chrome(driver_path, options=chrome_options)
+        driver = webdriver.Chrome(service=service, options=chrome_options)
         driver.maximize_window()
         
         return driver
