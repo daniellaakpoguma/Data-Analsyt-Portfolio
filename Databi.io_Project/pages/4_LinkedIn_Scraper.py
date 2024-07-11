@@ -49,7 +49,7 @@ def scrape_job_listings(url, job_count):
     return df.head(job_count)
 
 def main():
-    st.title("LinkedIn Job Scraper")
+    st.title("LinkedIn Data Scraper")
 
     with st.form(key='linkedin_scarp'):
         st.header("Search Parameters")
