@@ -1,6 +1,12 @@
 import streamlit as st
+import pandas as pd
+from pymongo import MongoClient
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error, r2_score
 
-st.title("Useful Information for Machine Learning Models on LinkedIn Data")
+
+st.title("Machine Learning Models")
 
 st.write("""
 1. **Sentiment Analysis**
@@ -40,16 +46,16 @@ st.write("""
 - Clustering features (e.g., k-means input features).
 
 4. **Engagement Prediction**
-**Useful Information:**
-- **Post Content:** Text, images, videos, hashtags.
-- **Historical Engagement Data:** Number of likes, comments, shares for past posts.
-- **User Activity:** Frequency of posting, types of posts.
-
-**Example Features:**
-- Post content features (e.g., text embeddings, image embeddings).
-- Historical engagement metrics.
-- Time of posting.
-- User profile features (e.g., number of connections, job title).
+**Features:** 
+-content
+-hashtags
+-page_name
+-date_posted
+**Target:** 
+-num_of_comment
+-num_of_likes
+-num_of_shares
+         Model: Regression models (e.g., linear regression, random forest regressor, neural networks)
 
 5. **Recommendation Systems**
 **Useful Information:**
@@ -84,3 +90,61 @@ st.write("""
 - NLP features (e.g., language models for text generation).
 - Image features for generating visually appealing content.
 """)
+
+
+# MongoDB connection
+client = MongoClient('mongodb://localhost:27017/')
+db = client['your_database_name']
+
+# Function to fetch data from MongoDB and convert to DataFrame
+def fetch_data(collection_name, limit=100, db=None):
+    collection = db[collection_name]
+    data = collection.find().limit(limit)
+    df = pd.DataFrame(list(data))
+    return df
+
+# Title of the application
+st.title("Instagram Post Engagement Predictor")
+
+# Fetch data from MongoDB
+df_posts = fetch_data('Instagram_Posts', db=db)
+
+# Display the data
+st.subheader("Instagram Posts Data")
+st.dataframe(df_posts.head(10))
+
+# Select features and target
+st.write("Select Features and Target")
+all_columns = df_posts.columns.tolist()
+features = st.multiselect("Select Features", all_columns, default=['num_comments', 'likes', 'photos', 'videos', 'video_view_count', 'video_play_count'])
+target = st.selectbox("Select Target", ['engagement_score_view'])
+
+if len(features) > 0 and target:
+    # Prepare the data
+    X = df_posts[features]
+    y = df_posts[target]
+
+    # Split the data
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+    # Create and train the model
+    model = LinearRegression()
+    model.fit(X_train, y_train)
+
+    # Make predictions
+    y_pred = model.predict(X_test)
+
+    # Evaluate the model
+    mse = mean_squared_error(y_test, y_pred)
+    r2 = r2_score(y_test, y_pred)
+
+    # Display evaluation metrics
+    st.write(f"Mean Squared Error: {mse}")
+    st.write(f"R^2 Score: {r2}")
+
+    # Visualize the results
+    st.write("Actual vs Predicted")
+    results = pd.DataFrame({'Actual': y_test.flatten(), 'Predicted': y_pred.flatten()})
+    st.line_chart(results)
+else:
+    st.write("Please select at least one feature and a target.")
