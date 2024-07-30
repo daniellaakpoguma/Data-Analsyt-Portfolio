@@ -2,7 +2,6 @@ import os
 import pandas as pd
 import streamlit as st
 from PIL import Image
-
 from pymongo import MongoClient, errors
 
 # Function to connect to MongoDB
@@ -30,28 +29,34 @@ def fetch_data(collection_name, limit=5, db=None):
 
 # List of CSV files and their corresponding collections
 csv_files = {
-    "Facebook -  Posts.csv": "Facebook_Posts",
-    "Facebook -  Comments.csv": "Facebook_Comments",
+    "Facebook - Posts.csv": "Facebook_Posts",
+    "Facebook - Comments.csv": "Facebook_Comments",
     "Instagram - Profiles.csv": "Instagram_Profiles",
     "Instagram - Posts.csv": "Instagram_Posts",
     "Instagram - Comments.csv": "Instagram_Comments",
+    "Pinterest - Posts.csv": "Pinterest_Posts",
     "Pinterest - Profiles.csv": "Pinterest_Profiles",
-    "Pinterest - Posts .csv": "Pinterest_Posts",
     "TikTok - Profiles.csv": "Tiktok_Profiles",
     "TikTok - Posts.csv": "Tiktok_Posts",
     "TikTok - Comments.csv": "Tiktok_Comments",
     "YouTube - Profiles.csv": "Youtube_Profiles",
     "Youtube - Videos posts.csv": "Youtube_Posts",
-    "Youtube - Comments.csv": "Youtube_Comments"
+    "YouTube - Comments.csv": "Youtube_Comments"
 }
 
 # Main Streamlit application
 def main():
     st.title("Data Sets")
+    st.markdown("## Social Media Data")
 
-    st.markdown("""## Social Media Data""")
+    # Get the MongoDB client
+    client = get_mongo_client()
+    if client is None:
+        return  # Stop execution if the connection fails
 
-    # Load data directly from local CSV files
+    db = client["social_media_data"] 
+
+    # Load data directly from local CSV files and into MongoDB
     script_dir = os.path.dirname(os.path.abspath(__file__))
     parent_dir = os.path.abspath(os.path.join(script_dir, os.pardir))  # One level up
     
@@ -59,6 +64,7 @@ def main():
         absolute_path = os.path.join(parent_dir, relative_path)
         
         if os.path.exists(absolute_path):
+            load_csv_to_mongo(absolute_path, collection_name, db)  # Load CSV into MongoDB
             df = pd.read_csv(absolute_path)
             # Dynamically create DataFrame variables
             globals()[f'df_{collection_name}'] = df
@@ -123,29 +129,21 @@ def main():
     if 'df_Youtube_Comments' in globals():
         st.dataframe(df_Youtube_Comments.head(10))
 
-    st.markdown("""##  Social Media Advertisement Data""")
-
+    st.markdown("## Social Media Advertisement Data")
     st.write("1. Revenue of Advertising in US:")
     st.write("https://www.statista.com/statistics/269916/mobile-advertising-spending-in-the-united-states/")
     st.write("2. Social Networking - Worldwide:")
     st.write("https://www.statista.com/outlook/amo/app/social-networking/worldwide")
 
-    st.markdown("""##  Social Media ML Analysis""")
-    # Get the directory of the current script
+    st.markdown("## Social Media ML Analysis")
     st.markdown("1. <u>Machine learning algorithms for social media analysis: A survey</u>", unsafe_allow_html=True)
-    st.write("""This article is just a more general one, providing insights into various applications of SM analysis: 
-             anomaly detection, behavioral analysis, bioinformatics, business intelligence, crime detection, epidemics,
-             event detection, image analysis, recommendations, relationships, and reputations,
-            and sentiment, opinion and emotions analysis""")
+    st.write("This article provides insights into various applications of social media analysis: anomaly detection, behavioral analysis, bioinformatics, business intelligence, crime detection, epidemics, event detection, image analysis, recommendations, relationships, reputations, and sentiment, opinion, and emotions analysis.")
     st.write("https://www.sciencedirect.com/science/article/abs/pii/S1574013721000356")
-    st.markdown("2. <u> A Study on Machine Learning in Social Media</u>", unsafe_allow_html=True)
+    st.markdown("2. <u>A Study on Machine Learning in Social Media</u>", unsafe_allow_html=True)
     st.write("https://www.ijser.org/researchpaper/A-Study-on-Machine-Learning-in-Social-Media.pdf")
-    st.markdown("3. <u> How well can machine learning predict demographics of social media users? </u>", unsafe_allow_html=True)
-    st.write(""" This article talks more about using social media used to study huuman behvaiour """)
+    st.markdown("3. <u>How well can machine learning predict demographics of social media users?</u>", unsafe_allow_html=True)
+    st.write("This article discusses using social media to study human behavior.")
     st.write("https://www.ijser.org/researchpaper/A-Study-on-Machine-Learning-in-Social-Media.pdf")
-
-   
-   
 
 # Run the main function
 if __name__ == "__main__":
