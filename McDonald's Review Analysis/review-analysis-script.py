@@ -8,6 +8,7 @@ from nltk.sentiment.vader import SentimentIntensityAnalyzer
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 from nltk.stem import WordNetLemmatizer
+import re
 
 # download nltk corpus (first time only)
 # nltk.download('all')
@@ -86,18 +87,26 @@ def preprocess_text(text):
 
 def get_sentiment(text):
     scores = analyzer.polarity_scores(text)
-    pos_score = scores['pos'] 
-    if pos_score >= 0.7:
+    compound_score = scores['compound']  # Overall sentiment score
+
+    # Determine sentiment based on compound score
+    if compound_score >= 0.7:
         sentiment = "Strongly Positive"
-    elif pos_score >= 0.5:
+    elif compound_score >= 0.5:
         sentiment = "Positive"
-    elif pos_score > -0.5:
+    elif compound_score > -0.5:
         sentiment = "Neutral"
-    elif pos_score > -0.7:
+    elif compound_score > -0.7:
         sentiment = "Negative"
     else:
-        sentiment = "Strongly Negative"   
-    return scores['score'], sentiment
+        sentiment = "Strongly Negative"
+    
+    return compound_score, sentiment
+
+# Function to remove other characters / corrupt text
+def is_clean_text(text):
+    pattern = re.compile(r'[^\x00-\x7F]+')  # Non-ASCII characters
+    return not bool(pattern.search(text))
 
 # Get file path
 file_path = r"C:\Users\rukev\OneDrive\Desktop\Data Analsyt Portfolio\Data-Analsyt-Portfolio\Data Sets\McDonald's Store Reviews\McDonald_s_Reviews.csv"
@@ -180,24 +189,40 @@ try:
     reviews_df_nomissing_unique['review_rating'] = reviews_df_nomissing_unique['rating'].apply(parse_rating)
     print(reviews_df_nomissing_unique['review_rating']) #Check Formatting
 
+    # Rename column to match other format of things
     reviews_df_nomissing_unique.rename(columns={'review': 'review_text'}, inplace=True)
-    #Drop other irrevelant columns
-    print(reviews_df_nomissing_unique.info()) 
-    # reviews_df_nomissing_unique.(drop)(columns=[['review_time', 'rating']], inplace=True)
-    # print(reviews_df_nomissing_unique.info()) 
 
-    # Preporcess texts
+    #Drop other irrevelant columns
+    reviews_df_nomissing_unique.drop(columns=['review_time', 'rating'], inplace=True)
+
+    # Find only valid reviews
+    reviews_df_nomissing_unique = reviews_df_nomissing_unique[reviews_df_nomissing_unique['review_text'].apply(is_clean_text)]
+
+    # Preprocess texts
     reviews_df_nomissing_unique['review_text'] = reviews_df_nomissing_unique['review_text'].apply(preprocess_text)
     print (reviews_df_nomissing_unique ['review_text'])
 
     analyzer = SentimentIntensityAnalyzer()
     # apply get_sentiment function
-    reviews_df_nomissing_unique[['sentiment_score', 'sentiment']] = reviews_df_nomissing_unique['review_text'].apply(get_sentiment)
+    reviews_df_nomissing_unique[['polarity_score', 'sentiment']] = reviews_df_nomissing_unique['review_text'].apply(lambda x: pd.Series(get_sentiment(x)))
     print("Sentiment")
     print(reviews_df_nomissing_unique)
 
-    # Save Results to CSV File
-    reviews_df_nomissing_unique.to_csv("McDonalds_Review_Sentiment_Analysis.csv")
+    # Define the file path
+    file_path = "McDonalds_Review_Sentiment_Analysis.csv"
+
+    # Save Results to CSV File with error checking
+    try:
+        reviews_df_nomissing_unique.to_csv(file_path, index=False)
+        print(f"DataFrame successfully saved to {file_path}")
+    except PermissionError:
+        print(f"Permission error: Unable to save file to {file_path}. Check file permissions.")
+    except FileNotFoundError:
+        print(f"File not found error: The directory for {file_path} does not exist.")
+    except IOError as e:
+        print(f"IO error occurred: {e}")
+    except Exception as e:
+        print(f"An unexpected error occurred: {e}")
 
 except FileNotFoundError:
     print(f"Error: The file at {file_path} was not found.")
