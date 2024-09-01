@@ -7,13 +7,14 @@ Welcome to my data analyst portfolio! I am passionate about uncovering insights 
   - Data Cleaning Projrect
   - Financial Risk Analysis
 - Python
-  - Sentiment analsysis on Mcdonalds Reviews
   - Financial Prediction
   - Customer Churn Prediction
   - Fraud Detection in Financial Transactions
   - Security Threat Prediction
   - Demand Forecasting for retail
 - Power BI
+  - In combination with Python:
+    - [Sentiment Analsysis on McDonalds Reviews](https://github.com/daniellaakpoguma/Data-Analsyt-Portfolio/tree/main/McDonald's%20Review%20Analysis)
 - R
 - Excel
   - [Customer Lifetime Value (CLV) Analysis On Amazon Prime Users](https://github.com/daniellaakpoguma/Data-Analsyt-Portfolio/tree/main/CLV%20Analysis%20On%20Amazon%20Prime%20Users)
