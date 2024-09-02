@@ -15,6 +15,7 @@ Welcome to my data analyst portfolio! I am passionate about uncovering insights 
 - R
 - Google Analytics/ Adobe Analytics
 - Power BI
+  - [Adventure Works Sales Dashboard](https://github.com/daniellaakpoguma/Data-Analsyt-Portfolio/tree/main/Adventure%20Works%20Sales%20Dashboard)
   - In combination with Python:
     - [Sentiment Analsysis on McDonalds Reviews](https://github.com/daniellaakpoguma/Data-Analsyt-Portfolio/tree/main/McDonald's%20Review%20Analysis)
 - Excel
