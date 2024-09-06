@@ -12,18 +12,17 @@ The project will cover the following aspects:
 - Monthly Trends: Analyze sales data on a monthly basis to identify trends, seasonal variations, and any patterns in sales volume and revenue.
 
 ## Metrics to be Analyzed:
-- Total sales by branch
+- Total Sales and Revenue
+- Total Sales and Revenue by Branch
 - Sales performance by product line
 - Average unit price and quantity sold
 - Monthly sales trends and variations
 - Customer segmentation and purchase behavior
-- Gross margin percentage and profitability
 
 ## Expected Outcomes:
 - Identify the top-performing branches and product lines.
 - Understand sales trends and seasonal patterns.
-- Provide actionable insights to improve sales strategies and inventory management.
+
 
 ## Tools and Technologies:
-- SQL for data extraction and analysis
-- Data visualization tools such as Power BI 
+- SQL
