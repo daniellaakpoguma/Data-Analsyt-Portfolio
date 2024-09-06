@@ -31,7 +31,7 @@ Welcome to my data analyst portfolio! I am passionate about uncovering insights 
   - **[Social Media Analysis Working Page](http://104.218.51.209:8011/Yelp_Dashboard)**
  
 ### SQL
-- **[Dead Prime Minister High School Managemnt System](https://github.com/daniellaakpoguma/Data-Analsyt-Portfolio/tree/main/Dead%20Prime%20Minister%20High%20School)**
+- **[Dead Prime Minister High School Management System](https://github.com/daniellaakpoguma/Data-Analsyt-Portfolio/tree/main/Dead%20Prime%20Minister%20High%20School)**
 
 ---
 
