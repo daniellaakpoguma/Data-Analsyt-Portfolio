@@ -31,7 +31,7 @@ After the data was gotten from Kaggle, a new Python script was created
 - Results were saved to a csv file
 
 ## IV. Visualization
-
+![Dashboard](Overview_page.png)
 
 ## References 
 1. https://www.kaggle.com/datasets/nelgiriyewithana/mcdonalds-store-reviews 
