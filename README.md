@@ -29,6 +29,9 @@ Welcome to my data analyst portfolio! I am passionate about uncovering insights 
 - **[Databi Project (In Progress)](https://databi.io/)**  
   _This project, expected to be completed by December 2024, involves analyzing social media data._  
   - **[Social Media Analysis Working Page](http://104.218.51.209:8011/Yelp_Dashboard)**
+ 
+### SQL
+- **[Dead Prime Minister High School Management System](https://github.com/daniellaakpoguma/Data-Analsyt-Portfolio/tree/main/Dead%20Prime%20Minister%20High%20School)**
 
 ---
 
