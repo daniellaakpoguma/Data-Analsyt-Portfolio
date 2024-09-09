@@ -1,4 +1,6 @@
 # Second Hand Shopping Insights
+## Project Overview
+This project aims to understand Poshmark data by analyzing insights into different categories, price ranges, and the services offered. The goal is to gain a comprehensive understanding of the platform’s product offerings, pricing trends, and seller performance. By examining these aspects, I aim to uncover patterns and trends that will provide a deeper understanding of Poshmark’s marketplace. 
 
 ## Description of Approach
 1. Information scrapped from Poshamrk website Selenuim Web driver, BeautifulSoup
