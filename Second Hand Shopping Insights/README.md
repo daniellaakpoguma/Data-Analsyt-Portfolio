@@ -12,3 +12,5 @@ This project aims to understand Poshmark data by analyzing insights into differe
 2. SQL can be used to transform data
 3. Explore data using SQL and so on
 4. Visualization done in Tableau
+
+5. Image Classification to be done on images 
