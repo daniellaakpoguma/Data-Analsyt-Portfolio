@@ -9,7 +9,7 @@ import time
 
 def poshmark_query(keyword_input):
     st.header("Poshmark Insights")
-    target_count=5
+    target_count=1000
     scroll_pause_time=2
     # Set up Chrome options
     chrome_options = Options()
@@ -38,6 +38,10 @@ def poshmark_query(keyword_input):
             item_price = item.find('span', class_='p--t--1').get_text() if item.find('span', class_='p--t--1') else 'N/A'
             item_size = item.find('a', class_='tile__details__pipe__size ellipses').get_text().replace('Size: ', '') if item.find('a', class_='tile__details__pipe__size ellipses') else 'N/A'
             item_brand = item.find('a', class_='tile__details__pipe__brand ellipses').get_text(strip=True) if item.find('a', class_='tile__details__pipe__brand ellipses') else 'N/A'
+            
+            # Find the <img> tag within the .card.card--small div
+            img_tag = item.find('img')  
+            img_url = img_tag.get('src', 'N/A') if img_tag else 'N/A'
 
             poshmark_link = 'https://poshmark.ca'
             link = item.find('a', class_='tile__covershot').get('href') if item.find('a', class_='tile__covershot') else 'N/A'
@@ -115,14 +119,15 @@ def poshmark_query(keyword_input):
                     'Item Name': item_name,
                     'Price': item_price,
                     'Size': item_size,
-                    'Product Link': item_link,
                     'Description':  description,
                     'Extra Info': extra_info,
                     'Colors':  colors_string, 
+                    'Image URL': img_url,
                     'No Of Seller Listings': listings, 
                     'No Of Sold Seller Listings': sold_listings,
                     'Seller Avg. Shipping Time': avg_ship_time,
                     'No of Seller Love Notes': love_notes,
+                    'Product Link': item_link,
                 })
              # Return to the main search results
             driver.back()
@@ -141,3 +146,10 @@ def poshmark_query(keyword_input):
     items_df = pd.DataFrame(items_data)
     st.write(items_df)
 
+    # Create a file name with the keyword input
+    file_name = f'{keyword_input}_poshmark_data.csv'
+    
+    # Save the DataFrame to a CSV file with the dynamic file name
+    items_df.to_csv(file_name, index=False)
+    
+    st.write(f"Data saved to {file_name}")
