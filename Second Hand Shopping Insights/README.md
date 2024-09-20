@@ -1,28 +1,28 @@
+
 # Second Hand Shopping Insights
+
 ## Project Overview
-This project aims to understand Poshmark data by analyzing insights into different categories, price ranges, and the services offered. The goal is to gain a comprehensive understanding of the platform’s product offerings, pricing trends, and seller performance. By examining these aspects, I aim to uncover patterns and trends that will provide a deeper understanding of Poshmark’s marketplace. 
+This project focuses on extracting, transforming, and analyzing data from the Poshmark marketplace. By understanding product categories, pricing trends, and seller performance, the aim is to uncover valuable insights from second-hand shopping data. The process spans web scraping, data transformation, and visualization, leveraging tools such as Python (Selenium, BeautifulSoup), SQL, and Streamlit.
 
 ## Description of Approach
-1. Information scrapped from Poshamrk website Selenuim Web driver, BeautifulSoup
-2. Created Streamlit application to be used for other users to get information from Poshmark themselves using keyword input
-3. CSV files were gotten for top 10 categories gotten from this list: https://poshwatch.io/top-categories-on-poshmark
+1. **Web Scraping**: 
+   - Scraped Poshmark data using Selenium WebDriver and BeautifulSoup for the top 10 product categories (source: https://poshwatch.io/top-categories-on-poshmark).
+   - The data includes product details such as brand, item name, price, size, description, and more.
+   
+2. **Streamlit Application**: 
+   - Developed an interactive app allowing users to scrape Poshmark using custom keywords.
+
+3. **Data Cleaning**:
+   - Performed data cleaning in Python, including cleaning and trimming text.
 
 ## Database
-- The CSV were imported into various tables in the database
+- Imported CSV files into a relational SQL database.
+- Organized data into separate tables for each category (shoes, tops, etc.).
 
 ## SQL 
-- CSV files downloaded into SQL as flat file
+- Imported data as flat files and set up relational tables.
+- Performed initial cleaning and transformation using SQL queries.
 
-## Power BI
-- 'N/A' values were moved in Colors column in all tables
-- Replaced 'N/A' in brand name with 'Unknwon'
-- Capitalized each word in Brand name
-- Clean and Trimmed text
 
-## Next Steps:
-1. Data downloaded into SQL, so ELT process can be done.
-2. SQL can be used to transform data
-3. Explore data using SQL and so on
-4. Visualization done in Tableau
-
-5. Image Classification to be done on images 
+## Next Steps
+- Develop an image classification model to categorize product images.
