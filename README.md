@@ -29,6 +29,9 @@ Welcome to my data analyst portfolio! I am passionate about uncovering insights 
 - **[Databi Project (In Progress)](https://databi.io/)**  
   _This project, expected to be completed by December 2024, involves analyzing social media data._  
   - **[Social Media Analysis Working Page](http://104.218.51.209:8011/Yelp_Dashboard)**
+    
+- **[Second Hand Shopping Insights](https://github.com/daniellaakpoguma/Data-Analsyt-Portfolio/tree/main/Second%20Hand%20Shopping%20Insights)**
+  _Developed a Python Streamlit Application to scrape Poshmark listings based on keyword queries_
  
 ### SQL
 - **[Dead Prime Minister High School Management System](https://github.com/daniellaakpoguma/Data-Analsyt-Portfolio/tree/main/Dead%20Prime%20Minister%20High%20School)**
@@ -40,8 +43,6 @@ Welcome to my data analyst portfolio! I am passionate about uncovering insights 
 ### SQL
 - **EDA Analysis on Los Angeles Crime Dataset**  
   _Performing exploratory data analysis on crime data using SQL._
-- **Poshmark Insights (SQL & Power BI)**  
-  _Developing a full-stack solution from Poshmark data insights to Power BI visualizations._
 - **Data Cleaning Project**  
   _Cleaning large datasets using SQL and Python to ensure data quality._
 - **Financial Risk Analysis**  
