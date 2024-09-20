@@ -31,7 +31,7 @@ Welcome to my data analyst portfolio! I am passionate about uncovering insights 
   - **[Social Media Analysis Working Page](http://104.218.51.209:8011/Yelp_Dashboard)**
     
 - **[Second Hand Shopping Insights](https://github.com/daniellaakpoguma/Data-Analsyt-Portfolio/tree/main/Second%20Hand%20Shopping%20Insights)**
-  _Developed a Python Streamlit Application to scrape Poshmark listings based on keyword queries_
+  _Developed a Python Streamlit Application to scrape Poshmark listings based on keyword queries._
  
 ### SQL
 - **[Dead Prime Minister High School Management System](https://github.com/daniellaakpoguma/Data-Analsyt-Portfolio/tree/main/Dead%20Prime%20Minister%20High%20School)**
