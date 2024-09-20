@@ -10,6 +10,15 @@ This project aims to understand Poshmark data by analyzing insights into differe
 ## Database
 - The CSV were imported into various tables in the database
 
+## SQL 
+- CSV files downloaded into SQL as flat file
+
+## Power BI
+- 'N/A' values were moved in Colors column in all tables
+- Replaced 'N/A' in brand name with 'Unknwon'
+- Capitalized each word in Brand name
+- Clean and Trimmed text
+
 ## Next Steps:
 1. Data downloaded into SQL, so ELT process can be done.
 2. SQL can be used to transform data
