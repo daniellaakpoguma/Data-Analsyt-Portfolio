@@ -3,6 +3,7 @@
  * Goal: To evaluate the sales performance on different metrics: brancg, prodyct lines, monthly, 
  */
 
+ USE [supermarket-sales];
  -- KPI Generation
  -- Total Sales & Revenue
  SELECT SUM(Unit_Price*Quantity) AS Total_Sales, SUM(Gross_Income) AS Total_Profit
@@ -94,4 +95,27 @@
  FROM sales
  WHERE Branch = 'C' 
  ORDER BY Gross_Income ASC;
+
+ -- Top Performing Sales By Product Line
+ SELECT SUM (Gross_Income), Product_Line
+ FROM sales
+ GROUP BY  Product_Line;
+
+SELECT A.Invoice_ID, B.Gross_Income, A.Branch AS Branch_A, B.Branch AS Branch_B
+FROM sales A, sales B
+WHERE A.Branch = 'A' AND B.Branch = 'B';
+
+SELECT Unit_Price FROM Sales
+UNION
+SELECT Gross_Income FROM Sales;
+
+SELECT AVG(Unit_Price) AS max_price, Branch
+FROM sales
+GROUP BY Branch
+HAVING AVG(Unit_Price) > 50
+ORDER BY max_price;
+
+
+
+
 
