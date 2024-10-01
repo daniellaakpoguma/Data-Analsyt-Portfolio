@@ -18,9 +18,6 @@ Welcome to my data analyst portfolio! I am passionate about uncovering insights 
 - **[Adventure Works Sales Dashboard](https://github.com/daniellaakpoguma/Data-Analsyt-Portfolio/tree/main/Adventure%20Works%20Sales%20Dashboard)**  
   _A sales performance analysis using Power BI to provide insights into the Adventure Works sales data._
   
-- **[Sentiment Analysis on McDonald's Reviews (Python & Power BI)](https://github.com/daniellaakpoguma/Data-Analsyt-Portfolio/tree/main/McDonald's%20Review%20Analysis)**  
-  _Performed sentiment analysis on customer reviews of McDonald's using Python, visualized in Power BI._
-
 ### Excel
 - **[Customer Lifetime Value (CLV) Analysis on Amazon Prime Users](https://github.com/daniellaakpoguma/Data-Analsyt-Portfolio/tree/main/CLV%20Analysis%20On%20Amazon%20Prime%20Users)**  
   _Analyzed customer lifetime value of Amazon Prime users using Excel to drive business strategies._
@@ -32,6 +29,9 @@ Welcome to my data analyst portfolio! I am passionate about uncovering insights 
     
 - **[Second Hand Shopping Insights](https://github.com/daniellaakpoguma/Data-Analsyt-Portfolio/tree/main/Second%20Hand%20Shopping%20Insights)**
   _Developed a Python Streamlit Application to scrape Poshmark listings based on keyword queries._
+
+- **[Sentiment Analysis on McDonald's Reviews (Python & Power BI)](https://github.com/daniellaakpoguma/Data-Analsyt-Portfolio/tree/main/McDonald's%20Review%20Analysis)**  
+  _Performed sentiment analysis on customer reviews of McDonald's using Python, visualized in Power BI._
  
 ### SQL
 - **[Dead Prime Minister High School Management System](https://github.com/daniellaakpoguma/Data-Analsyt-Portfolio/tree/main/Dead%20Prime%20Minister%20High%20School)**
@@ -48,7 +48,7 @@ Welcome to my data analyst portfolio! I am passionate about uncovering insights 
 - **Financial Risk Analysis**  
   _Using SQL to analyze financial risks and identify potential areas of concern._
 
-### Python
+### Python - more heath related stuff to be added 
 - **Financial Prediction**  
   _Building models to predict financial trends and risks._
 - **Customer Churn Prediction**  
