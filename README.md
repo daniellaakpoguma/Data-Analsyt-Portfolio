@@ -31,36 +31,4 @@ Welcome to my data analyst portfolio! I am passionate about uncovering insights 
 
 ---
 
-## Upcoming Projects
-
-### SQL
-- **EDA Analysis on Los Angeles Crime Dataset**  
-  _Performing exploratory data analysis on crime data using SQL._
-- **Data Cleaning Project**  
-  _Cleaning large datasets using SQL and Python to ensure data quality._
-- **Financial Risk Analysis**  
-  _Using SQL to analyze financial risks and identify potential areas of concern._
-
-### Python - more heath related stuff to be added 
-- **Financial Prediction**  
-  _Building models to predict financial trends and risks._
-- **Customer Churn Prediction**  
-  _Analyzing and predicting customer churn using machine learning techniques._
-- **Fraud Detection in Financial Transactions**  
-  _Identifying fraudulent financial transactions using Python and machine learning._
-- **Security Threat Prediction**  
-  _Predicting security threats using advanced algorithms and datasets._
-- **Demand Forecasting for Retail**  
-  _Developing forecasting models to predict product demand in retail._
-
-### R
-- **To be added**  
-  _Planning to explore and include projects based on R._
-
-### Google Analytics/Adobe Analytics
-- **To be added**  
-  _Planning to explore and include projects focusing on web and digital analytics._
-
----
-
 Thank you for taking the time to explore my portfolio! Feel free to connect with me via [LinkedIn](https://www.linkedin.com/in/daniella-akpoguma-943b69238/) or reach out to discuss potential opportunities.
