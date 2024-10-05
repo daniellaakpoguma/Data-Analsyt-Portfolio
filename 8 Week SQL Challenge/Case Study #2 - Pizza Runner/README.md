@@ -49,29 +49,92 @@ FROM count_of_pizza;
 
 7. For each customer, how many delivered pizzas had at least 1 change and how many had no changes?
 ``` sql
-/** Still In Progress */
-SELECT COUNT(CASE WHEN  o.exclusions IS NULL THEN 1 END) as no_exclusions, COUNT(CASE WHEN  o.extras IS NULL THEN 1 END) as no_extras
+/* Updating NULL values */
+UPDATE pizza_runner.customer_orders
+SET exclusions = NULL
+WHERE exclusions = 'null' OR exclusions = '' ;
+
+UPDATE pizza_runner.customer_orders
+SET extras = NULL
+WHERE extras = 'null' OR extras = '';
+
+SELECT customer_id, COUNT(CASE WHEN  o.exclusions IS NULL AND  o.extras IS NULL THEN 1 END) as no_changes, COUNT(CASE WHEN   o.exclusions IS NOT NULL OR  o.extras IS NOT NULL THEN 1 END) as at_least_one_change
 FROM pizza_runner.customer_orders AS o
+GROUP BY customer_id;
+
 ```
 
 8. How many pizzas were delivered that had both exclusions and extras?
 ``` sql
-``` 
+UPDATE pizza_runner.runner_orders
+SET cancellation = NULL
+WHERE cancellation = 'null' OR  cancellation = '';
+
+SELECT COUNT(CASE WHEN o.exclusions IS NOT NULL AND  o.extras IS NOT NULL THEN 1 END) as pizzas_delivered_exclusions_extras
+FROM pizza_runner.customer_orders AS o
+JOIN pizza_runner.runner_orders AS r
+ON o.order_id = r.order_id
+WHERE cancellation IS  NULL;
+```
+
 9. What was the total volume of pizzas ordered for each hour of the day?
 ``` sql
-``` 
+SELECT EXTRACT(HOUR FROM CAST(o.order_time AS TIMESTAMP)) AS hour_of_the_day, COUNT(*) AS no_of_orders
+FROM pizza_runner.customer_orders AS o
+GROUP BY hour_of_the_day
+ORDER BY hour_of_the_day;
+```
+
 10. What was the volume of orders for each day of the week?
 ``` sql
+SELECT TO_CHAR(CAST(o.order_time AS TIMESTAMP), 'Day') AS day_of_the_week, 
+       COUNT(*) AS no_of_orders
+FROM pizza_runner.customer_orders AS o
+GROUP BY TO_CHAR(CAST(o.order_time AS TIMESTAMP), 'Day')
+ORDER BY day_of_the_week;
 ``` 
 
 ## B. Runner and Customer Experience
 1. How many runners signed up for each 1 week period? (i.e. week starts 2021-01-01)
+``` sql
+SELECT FLOOR((registration_date - DATE '2021-01-01') / 7) + 1 AS week_no, COUNT(*) AS runner_count
+FROM pizza_runner.runners
+GROUP BY week_no
+ORDER BY week_no;
+```
+
 2. What was the average time in minutes it took for each runner to arrive at the Pizza Runner HQ to pickup the order?
+``` sql
+/* Hanlde null string in table */
+UPDATE pizza_runner.runner_orders
+SET pickup_time = NULL
+where pickup_time = 'null';
+
+SELECT runner_id, AVG(CAST(pickup_time AS TIMESTAMP) - CAST(order_time AS TIMESTAMP)) AS avg_pickup_time
+FROM pizza_runner.runner_orders r_info
+JOIN pizza_runner.customer_orders orders
+ON r_info.order_id = orders.order_id
+GROUP BY runner_id;
+```
+
 3. Is there any relationship between the number of pizzas and how long the order takes to prepare?
+``` sql
+```
+
 4. What was the average distance travelled for each customer?
+``` sql
+```
+
 5. What was the difference between the longest and shortest delivery times for all orders?
+``` sql
+```
+
 6. What was the average speed for each runner for each delivery and do you notice any trend for these values?
+``` sql
+``` 
 7. What is the successful delivery percentage for each runner?
+``` sql
+``` 
 
 ## C. Ingredient Optimisation
 What are the standard ingredients for each pizza?
