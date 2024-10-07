@@ -165,24 +165,59 @@ FROM cleaned_duration
 
 6. What was the average speed for each runner for each delivery and do you notice any trend for these values?
 ``` sql
+WITH cleaned_values AS (
+  SELECT runner_id, order_id, (CAST(NULLIF(REGEXP_REPLACE(duration, '[^0-9.]', '', 'g'), '') AS 		DECIMAL)) AS numeric_duration, (CAST(NULLIF(REGEXP_REPLACE(distance, '[^0-9.]', '', 'g'), '') AS DECIMAL)) AS numeric_distance
+  FROM  pizza_runner.runner_orders
+  WHERE cancellation IS NULL
+) SELECT runner_id, order_id, AVG(numeric_distance/numeric_duration) AS avg_speed
+ FROM cleaned_values
+ GROUP BY runner_id, order_id
+ ORDER BY runner_id, order_id;
 ```
 
 7. What is the successful delivery percentage for each runner?
 ``` sql
+SELECT runner_id, COUNT(*) AS delivered_count
+FROM pizza_runner.runner_orders
+GROUP BY runner_id;
 ``` 
 
 ## C. Ingredient Optimisation
-What are the standard ingredients for each pizza?
-What was the most commonly added extra?
-What was the most common exclusion?
-Generate an order item for each record in the customers_orders table in the format of one of the following:
-Meat Lovers
-Meat Lovers - Exclude Beef
+1. What are the standard ingredients for each pizza?
+``` sql
+/** Still in the works
+SELECT pizza_names, topping_name
+FROM pizza_runner.pizza_names AS n
+JOIN  pizza_runner.pizza_recipes AS r
+ON n.pizza_id = r.pizza_id
+JOIN LATERAL unnest(string_to_array(r.toppings, ',')) AS topping_id
+  ON topping_id::int = t.topping_id
+JOIN pizza_runner.pizza_toppings AS t
+  ON topping_id::int = t.topping_id;
+  **/
+```
+
+2. What was the most commonly added extra?
+``` sql
+``` 
+3. What was the most common exclusion?
+``` sql
+``` 
+4. Generate an order item for each record in the customers_orders table in the format of one of the following:
+a. Meat Lovers:
+``` sql
+``` 
+b. Meat Lovers - Exclude Beef:
+``` sql
+``` 
 Meat Lovers - Extra Bacon
 Meat Lovers - Exclude Cheese, Bacon - Extra Mushroom, Peppers
 Generate an alphabetically ordered comma separated ingredient list for each pizza order from the customer_orders table and add a 2x in front of any relevant ingredients
 For example: "Meat Lovers: 2xBacon, Beef, ... , Salami"
-What is the total quantity of each ingredient used in all delivered pizzas sorted by most frequent first?
+
+5. What is the total quantity of each ingredient used in all delivered pizzas sorted by most frequent first?
+``` sql
+``` 
 
 ## D. Pricing and Ratings
 If a Meat Lovers pizza costs $12 and Vegetarian costs $10 and there were no charges for changes - how much money has Pizza Runner made so far if there are no delivery fees?
