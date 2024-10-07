@@ -119,19 +119,54 @@ GROUP BY runner_id;
 
 3. Is there any relationship between the number of pizzas and how long the order takes to prepare?
 ``` sql
+/** Query used in earlier questions to hanlde nulls string in table */
+UPDATE pizza_runner.runner_orders
+SET cancellation = NULL
+WHERE cancellation = 'null' OR  cancellation = '';
+
+/** Query used in earlier questions to hanlde nulls string in table */    
+UPDATE pizza_runner.runner_orders
+SET pickup_time = NULL
+where pickup_time = 'null';
+
+/** Answer for this question */
+/* Assuming, the order is picked up as soon as the order is done being prepared */ 
+ SELECT r.order_id, COUNT(*) AS no_of_pizzas_per_order, (CAST (pickup_time AS TIMESTAMP) - CAST(order_time AS TIMESTAMP)) AS prep_time
+ FROM pizza_runner.customer_orders AS c
+ JOIN pizza_runner.runner_orders AS r
+ ON r.order_id = c.order_id
+ WHERE cancellation IS  NULL
+ GROUP BY r.order_id, prep_time
+ ORDER BY  prep_time;
+-- For the most part, the prep time is directly proportional to the number of pizzas in the order. However, there is a special case with order 8 which I thought was related to the type of pizza id or number of changes, but that also seems to not be the case
 ```
+ANSWER: For the most part, the prep time is directly proportional to the number of pizzas in the order. However, there is a special case with order 8 which I thought was related to the type of pizza id or number of changes, but that also seems to not be the case
 
 4. What was the average distance travelled for each customer?
 ``` sql
+/** Excluding cancelled orders **/
+SELECT customer_id,   AVG(CAST(NULLIF(REGEXP_REPLACE(distance, '[^0-9.]', '', 'g'), '') AS DECIMAL)) AS avg_distance
+FROM pizza_runner.runner_orders AS r
+JOIN  pizza_runner.customer_orders AS c
+ON r.order_id = c.order_id
+WHERE cancellation IS NULL
+GROUP BY customer_id;
 ```
 
 5. What was the difference between the longest and shortest delivery times for all orders?
 ``` sql
+WITH cleaned_duration AS (
+  SELECT (CAST(NULLIF(REGEXP_REPLACE(duration, '[^0-9.]', '', 'g'), '') AS 		DECIMAL)) AS numeric_duration
+  FROM  pizza_runner.runner_orders
+) 
+SELECT MAX(numeric_duration) - MIN(numeric_duration) AS duration_difference
+FROM cleaned_duration
 ```
 
 6. What was the average speed for each runner for each delivery and do you notice any trend for these values?
 ``` sql
-``` 
+```
+
 7. What is the successful delivery percentage for each runner?
 ``` sql
 ``` 
