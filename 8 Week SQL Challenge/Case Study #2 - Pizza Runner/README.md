@@ -185,24 +185,26 @@ GROUP BY runner_id;
 ## C. Ingredient Optimisation
 1. What are the standard ingredients for each pizza?
 ``` sql
-/** Still in the works
-SELECT pizza_names, topping_name
-FROM pizza_runner.pizza_names AS n
-JOIN  pizza_runner.pizza_recipes AS r
-ON n.pizza_id = r.pizza_id
-JOIN LATERAL unnest(string_to_array(r.toppings, ',')) AS topping_id
-  ON topping_id::int = t.topping_id
-JOIN pizza_runner.pizza_toppings AS t
-  ON topping_id::int = t.topping_id;
-  **/
+WITH ingredients AS ( 
+  SELECT  pizza_name, CAST(UNNEST(STRING_TO_ARRAY(toppings, ',')) AS INT) AS toppings_ids
+  FROM pizza_runner.pizza_names AS n
+  JOIN pizza_runner.pizza_recipes AS r
+  ON n.pizza_id = r.pizza_id
+  ) SELECT pizza_name, topping_name
+  FROM ingredients AS i
+  JOIN pizza_runner.pizza_toppings AS t
+  ON i.toppings_ids = t.topping_id
+  ORDER BY pizza_name;
 ```
 
 2. What was the most commonly added extra?
 ``` sql
-``` 
+```
+
 3. What was the most common exclusion?
 ``` sql
-``` 
+```
+
 4. Generate an order item for each record in the customers_orders table in the format of one of the following:
 a. Meat Lovers:
 ``` sql
@@ -210,32 +212,36 @@ a. Meat Lovers:
 b. Meat Lovers - Exclude Beef:
 ``` sql
 ``` 
-Meat Lovers - Extra Bacon
-Meat Lovers - Exclude Cheese, Bacon - Extra Mushroom, Peppers
-Generate an alphabetically ordered comma separated ingredient list for each pizza order from the customer_orders table and add a 2x in front of any relevant ingredients
-For example: "Meat Lovers: 2xBacon, Beef, ... , Salami"
+c. Meat Lovers - Extra Bacon
+``` sql
+```
+d. Meat Lovers - Exclude Cheese, Bacon - Extra Mushroom, Peppers
+``` sql
+```
 
-5. What is the total quantity of each ingredient used in all delivered pizzas sorted by most frequent first?
+5. Generate an alphabetically ordered comma separated ingredient list for each pizza order from the customer_orders table and add a 2x in front of any relevant ingredients. For example: "Meat Lovers: 2xBacon, Beef, ... , Salami"
+
+6. What is the total quantity of each ingredient used in all delivered pizzas sorted by most frequent first?
 ``` sql
 ``` 
 
 ## D. Pricing and Ratings
-If a Meat Lovers pizza costs $12 and Vegetarian costs $10 and there were no charges for changes - how much money has Pizza Runner made so far if there are no delivery fees?
-What if there was an additional $1 charge for any pizza extras?
-Add cheese is $1 extra
-The Pizza Runner team now wants to add an additional ratings system that allows customers to rate their runner, how would you design an additional table for this new dataset - generate a schema for this new table and insert your own data for ratings for each successful customer order between 1 to 5.
-Using your newly generated table - can you join all of the information together to form a table which has the following information for successful deliveries?
-customer_id
-order_id
-runner_id
-rating
-order_time
-pickup_time
-Time between order and pickup
-Delivery duration
-Average speed
-Total number of pizzas
-If a Meat Lovers pizza was $12 and Vegetarian $10 fixed prices with no cost for extras and each runner is paid $0.30 per kilometre traveled - how much money does Pizza Runner have left over after these deliveries?
+1. If a Meat Lovers pizza costs $12 and Vegetarian costs $10 and there were no charges for changes - how much money has Pizza Runner made so far if there are no delivery fees?
+2. What if there was an additional $1 charge for any pizza extras?
+ - Add cheese is $1 extra
+3. The Pizza Runner team now wants to add an additional ratings system that allows customers to rate their runner, how would you design an additional table for this new dataset - generate a schema for this new table and insert your own data for ratings for each successful customer order between 1 to 5.
+4. Using your newly generated table - can you join all of the information together to form a table which has the following information for successful deliveries?
+- customer_id
+- order_id
+- runner_id
+- rating
+- order_time
+- pickup_time
+- Time between order and pickup
+- Delivery duration
+- Average speed
+- Total number of pizzas
+5. If a Meat Lovers pizza was $12 and Vegetarian $10 fixed prices with no cost for extras and each runner is paid $0.30 per kilometre traveled - how much money does Pizza Runner have left over after these deliveries?
 
 ## E. Bonus Questions
 If Danny wants to expand his range of pizzas - how would this impact the existing data design? Write an INSERT statement to demonstrate what would happen if a new Supreme pizza with all the toppings was added to the Pizza Runner menu?
