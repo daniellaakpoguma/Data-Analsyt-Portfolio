@@ -5,6 +5,8 @@ FROM dbo.CovidDeaths;
 SELECT *
 FROM dbo.CovidVaccinations;
 
+
+/* Queries for Tableau */
 -- Select Data that we are going to be using 
 SELECT Location, date, total_cases, new_cases, total_deaths, population
 FROM dbo.CovidDeaths
@@ -94,13 +96,66 @@ FROM PortfolioProject..CovidDeaths
 WHERE continent is not null 
 ORDER BY 1,2;
 
+
 -- Total Population vs Vaccinations
 -- Shows Percentage of Population that has recieved at least one Covid Vaccine
-SELECT deaths.continent, deaths.location, population, (people_vaccinated/population) * 100 AS VaccinationPercentage
-FROM  dbo.CovidDeaths AS deaths 
-JOIN CovidVaccinations AS vaccinations
-ON deaths.iso_code = vaccinations.iso_code;
+SELECT dea.continent, 
+       dea.location, 
+       dea.date, 
+       dea.population, 
+       COALESCE(vac.new_vaccinations, 0) AS new_vaccinations,
+       SUM(CONVERT(BIGINT,COALESCE(vac.new_vaccinations, 0))) OVER (PARTITION BY dea.Location ORDER BY dea.location, dea.Date) AS RollingPeopleVaccinated
+FROM PortfolioProject..CovidDeaths dea
+JOIN PortfolioProject..CovidVaccinations vac
+    ON dea.location = vac.location
+    AND dea.date = vac.date
+WHERE dea.continent IS NOT NULL 
+ORDER BY 2, 3;
 
+-- Using CTE to perform Calculation on Partition By in previous query
+With PopvsVac (Continent, Location, Date, Population, New_Vaccinations, RollingPeopleVaccinated)
+as
+(
+Select dea.continent, dea.location, dea.date, dea.population, vac.new_vaccinations
+, SUM(CONVERT(BIGINT,vac.new_vaccinations)) OVER (Partition by dea.Location Order by dea.location, dea.Date) as RollingPeopleVaccinated
+From PortfolioProject..CovidDeaths dea
+Join PortfolioProject..CovidVaccinations vac
+	On dea.location = vac.location
+	and dea.date = vac.date
+where dea.continent is not null 
+)
+Select *, (RollingPeopleVaccinated/Population)*100 AS RollingPeopleVaccinatedPercentage
+From PopvsVac;
+
+
+
+-- Using Temp Table to perform Calculation on Partition By in previous query
+
+DROP Table if exists #PercentPopulationVaccinated
+Create Table #PercentPopulationVaccinated
+(
+Continent nvarchar(255),
+Location nvarchar(255),
+Date datetime,
+Population numeric,
+New_vaccinations numeric,
+RollingPeopleVaccinated numeric
+)
+
+Insert into #PercentPopulationVaccinated
+Select dea.continent, dea.location, dea.date, dea.population, vac.new_vaccinations
+, SUM(CONVERT(BIGINT,vac.new_vaccinations)) OVER (Partition by dea.Location Order by dea.location, dea.Date) as RollingPeopleVaccinated
+From PortfolioProject..CovidDeaths dea
+Join PortfolioProject..CovidVaccinations vac
+	On dea.location = vac.location
+	and dea.date = vac.date
+WHERE dea.continent IS NOT NULL
+
+Select *, (RollingPeopleVaccinated/Population)*100
+From #PercentPopulationVaccinated;
+
+-- Creating View to store data for later visualizations
+Create View PercentPopulationVaccinated as
 Select dea.continent, dea.location, dea.date, dea.population, vac.new_vaccinations
 , SUM(CONVERT(int,vac.new_vaccinations)) OVER (Partition by dea.Location Order by dea.location, dea.Date) as RollingPeopleVaccinated
 --, (RollingPeopleVaccinated/population)*100
@@ -109,4 +164,6 @@ Join PortfolioProject..CovidVaccinations vac
 	On dea.location = vac.location
 	and dea.date = vac.date
 where dea.continent is not null 
-order by 2,3
+
+
+
