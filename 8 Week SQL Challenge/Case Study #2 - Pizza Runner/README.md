@@ -199,6 +199,17 @@ WITH ingredients AS (
 
 2. What was the most commonly added extra?
 ``` sql
+UPDATE pizza_runner.customer_orders
+SET extras = NULL
+WHERE extras  = 'null' OR  extras  = '';
+
+SELECT CAST(extra AS INT) AS extras, COUNT(*) AS count
+FROM (
+   SELECT UNNEST(STRING_TO_ARRAY(extras, ',')) AS extra
+   FROM pizza_runner.customer_orders
+) AS unnested_extras
+GROUP BY  extras 
+ORDER BY extras;
 ```
 
 3. What was the most common exclusion?
