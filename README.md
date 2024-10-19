@@ -1,7 +1,4 @@
 # Data Analyst Portfolio
-
-Welcome to my data analyst portfolio! I am passionate about uncovering insights from data and translating them into actionable strategies. With a blend of analytical skills, programming proficiency, and domain knowledge, I strive to bring value to organizations through data-driven decision-making.
----
 ## Projects
 ### Excel
 - **[Customer Lifetime Value (CLV) Analysis on Amazon Prime Users](https://github.com/daniellaakpoguma/Data-Analsyt-Portfolio/tree/main/CLV%20Analysis%20On%20Amazon%20Prime%20Users)**  
