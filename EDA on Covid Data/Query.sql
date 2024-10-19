@@ -1,6 +1,6 @@
 -- See all available columns from death
 SELECT * 
-FROM dbo.CovidDeaths;
+FROM PortfolioProject..CovidDeaths;
 
 SELECT *
 FROM dbo.CovidVaccinations;
@@ -9,7 +9,7 @@ FROM dbo.CovidVaccinations;
 /* Queries for Tableau */
 -- Select Data that we are going to be using 
 SELECT Location, date, total_cases, new_cases, total_deaths, population
-FROM dbo.CovidDeaths
+FROM PortfolioProject..CovidDeaths
 WHERE continent IS NOT NULL;
 
 --------- MY COUNTRY (CANADA) ----------
@@ -17,7 +17,7 @@ WHERE continent IS NOT NULL;
 -- Shows likelihood of dying if you contract covid in Canada
 SELECT location, date, total_cases, total_deaths,
 CASE WHEN total_cases = 0 THEN 0 ELSE (total_deaths/total_cases) * 100 END AS DeathPercentage
-FROM dbo.CovidDeaths
+FROM PortfolioProject..CovidDeaths
 WHERE location like '%canada%'
 AND continent IS NOT NULL
 order by 1,2;
@@ -25,7 +25,7 @@ order by 1,2;
 -- Total Cases vs Population
 -- Shows what percentage of population infected with Covid in Canada
 SELECT location, date, total_cases, population, (total_cases/population) * 100 AS CasesPercentage
-FROM dbo.CovidDeaths
+FROM PortfolioProject..CovidDeaths
 WHERE location like '%canada%'
 AND continent IS NOT NULL
 order by 1,2;
@@ -48,9 +48,15 @@ order by 1,2;
 
 -- Countries with Highest Infection Rate compared to Population
 SELECT location, population, max(total_cases) AS highest_infection_count, max((total_cases/ population) * 100)  AS CovidPercentage
-FROM dbo.CovidDeaths
+FROM PortfolioProject..CovidDeaths
 WHERE continent IS NOT NULL
 GROUP BY location, population
+ORDER BY CovidPercentage DESC;
+
+SELECT location, population,date, max(total_cases) AS highest_infection_count, max((total_cases/ population) * 100)  AS CovidPercentage
+FROM PortfolioProject..CovidDeaths
+WHERE continent IS NOT NULL
+GROUP BY location, population, date
 ORDER BY CovidPercentage DESC;
 
 -- Countries with Highest Death Count per Population
@@ -59,6 +65,9 @@ FROM dbo.CovidDeaths
 WHERE continent IS NOT NULL
 GROUP BY location, population
 ORDER BY DeathCountPerPopulation DESC;
+
+
+
 
 --------- BY CONTINENT ----------
 -- Showing contintents with the highest death count per population
@@ -70,8 +79,9 @@ ORDER BY DeathCountPerPopulation DESC;
 
 -- Showing contintents with the highest death count
 SELECT continent, MAX(total_deaths) AS TotalDeathCount
-FROM dbo.CovidDeaths
+FROM PortfolioProject..CovidDeaths
 WHERE continent IS NOT NULL
+and location not in ('World', 'European Union', 'International')
 GROUP BY continent
 ORDER BY  TotalDeathCount DESC;
 
