@@ -3,13 +3,15 @@
 Welcome to my data analyst portfolio! I am passionate about uncovering insights from data and translating them into actionable strategies. With a blend of analytical skills, programming proficiency, and domain knowledge, I strive to bring value to organizations through data-driven decision-making.
 
 ---
-
-## Projects
-
+## Tutorials
 ### Power BI
 - **[Adventure Works Sales Dashboard](https://github.com/daniellaakpoguma/Data-Analsyt-Portfolio/tree/main/Adventure%20Works%20Sales%20Dashboard)**  
   _A sales performance analysis using Power BI to provide insights into the Adventure Works sales data._
-  
+### Tableau 
+- **[Covid Dashboard - EDA](https://github.com/daniellaakpoguma/Data-Analsyt-Portfolio/tree/main/EDA%20on%20Covid%20Data)**
+----
+
+## Projects
 ### Excel
 - **[Customer Lifetime Value (CLV) Analysis on Amazon Prime Users](https://github.com/daniellaakpoguma/Data-Analsyt-Portfolio/tree/main/CLV%20Analysis%20On%20Amazon%20Prime%20Users)**  
   _Analyzed customer lifetime value of Amazon Prime users using Excel to drive business strategies._
