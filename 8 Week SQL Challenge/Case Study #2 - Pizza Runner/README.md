@@ -203,31 +203,83 @@ UPDATE pizza_runner.customer_orders
 SET extras = NULL
 WHERE extras  = 'null' OR  extras  = '';
 
-SELECT CAST(extra AS INT) AS extras, COUNT(*) AS count
+WITH extras_ranking AS (
+SELECT 
+    CAST(extras_unnested AS INT) AS extras_single, 
+    COUNT(*) AS count, 
+    RANK() OVER (ORDER BY COUNT(*) DESC) AS rank
 FROM (
-   SELECT UNNEST(STRING_TO_ARRAY(extras, ',')) AS extra
-   FROM pizza_runner.customer_orders
+    SELECT UNNEST(STRING_TO_ARRAY(extras, ',')) AS extras_unnested
+    FROM pizza_runner.customer_orders
 ) AS unnested_extras
-GROUP BY  extras 
-ORDER BY extras;
+GROUP BY extras_single
+) SELECT extras_single, count, rank
+FROM extras_ranking
+WHERE rank = 1;
+ 
 ```
 
 3. What was the most common exclusion?
 ``` sql
+UPDATE pizza_runner.customer_orders
+SET extras = NULL
+WHERE exclusions  = 'null' OR  exclusions  = '';
+
+WITH exclusions_ranking AS (
+SELECT 
+    CAST(exclusions_unnested AS INT) AS exclusions_single, 
+    COUNT(*) AS count, 
+    RANK() OVER (ORDER BY COUNT(*) DESC) AS rank
+FROM (
+    SELECT UNNEST(STRING_TO_ARRAY(exclusions, ',')) AS exclusions_unnested
+    FROM pizza_runner.customer_orders
+) AS unnested_exclusions
+GROUP BY exclusions_single
+) SELECT exclusions_single, count, rank
+FROM exclusions_ranking
+WHERE rank = 1;
 ```
 
 4. Generate an order item for each record in the customers_orders table in the format of one of the following:
 a. Meat Lovers:
-``` sql
-``` 
 b. Meat Lovers - Exclude Beef:
-``` sql
-``` 
 c. Meat Lovers - Extra Bacon
-``` sql
-```
 d. Meat Lovers - Exclude Cheese, Bacon - Extra Mushroom, Peppers
 ``` sql
+UPDATE pizza_runner.customer_orders
+SET extras = NULL
+WHERE extras  = 'null' OR  extras  = '';
+
+UPDATE pizza_runner.customer_orders
+SET extras = NULL
+WHERE exclusions  = 'null' OR  exclusions  = '';
+
+WITH orders_extras_exclusions AS (
+  SELECT order_id, pizza_name, UNNEST(STRING_TO_ARRAY(extras, ',')) AS extras_unnested, UNNEST(STRING_TO_ARRAY(exclusions, ',')) AS exclusions_unnested
+  FROM pizza_runner.pizza_names AS pizza_names
+  JOIN pizza_runner.customer_orders AS orders
+  ON orders.pizza_id = pizza_names.pizza_id
+),
+orders_extras_exclusions_names AS (
+  SELECT order_id, pizza_name,
+  CASE 
+        WHEN extras_unnested IS NOT NULL AND extras_unnested <> '' 
+  		THEN CAST(extras_unnested AS INT) 
+        ELSE NULL 
+        END AS extras_unnested,
+   CASE 
+         WHEN exclusions_unnested IS NOT NULL AND exclusions_unnested <> ''
+  		 THEN CAST(exclusions_unnested AS INT) 
+         ELSE NULL 
+         END AS exclusions_unnested
+  FROM orders_extras_exclusions
+ ) 
+ SELECT *
+ FROM orders_extras_exclusions_names
+ JOIN pizza_runner.pizza_toppings AS toppings 
+  ON toppings.topping_id =  extras_unnested
+  OR toppings.topping_id = exclusions_unnested
+ WHERE extras_unnested IS NOT NULL OR  exclusions_unnested IS NOT NULL  ; 
 ```
 
 5. Generate an alphabetically ordered comma separated ingredient list for each pizza order from the customer_orders table and add a 2x in front of any relevant ingredients. For example: "Meat Lovers: 2xBacon, Beef, ... , Salami"
