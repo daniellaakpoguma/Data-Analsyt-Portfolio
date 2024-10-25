@@ -255,31 +255,77 @@ SET extras = NULL
 WHERE exclusions  = 'null' OR  exclusions  = '';
 
 WITH orders_extras_exclusions AS (
-  SELECT order_id, pizza_name, UNNEST(STRING_TO_ARRAY(extras, ',')) AS extras_unnested, UNNEST(STRING_TO_ARRAY(exclusions, ',')) AS exclusions_unnested
-  FROM pizza_runner.pizza_names AS pizza_names
-  JOIN pizza_runner.customer_orders AS orders
-  ON orders.pizza_id = pizza_names.pizza_id
-),
-orders_extras_exclusions_names AS (
-  SELECT order_id, pizza_name,
-  CASE 
-        WHEN extras_unnested IS NOT NULL AND extras_unnested <> '' 
-  		THEN CAST(extras_unnested AS INT) 
-        ELSE NULL 
-        END AS extras_unnested,
-   CASE 
-         WHEN exclusions_unnested IS NOT NULL AND exclusions_unnested <> ''
-  		 THEN CAST(exclusions_unnested AS INT) 
-         ELSE NULL 
-         END AS exclusions_unnested
-  FROM orders_extras_exclusions
- ) 
- SELECT *
- FROM orders_extras_exclusions_names
- JOIN pizza_runner.pizza_toppings AS toppings 
-  ON toppings.topping_id =  extras_unnested
-  OR toppings.topping_id = exclusions_unnested
- WHERE extras_unnested IS NOT NULL OR  exclusions_unnested IS NOT NULL  ; 
+  SELECT 
+    order_id, 
+    customer_id, 
+    pizza_name, 
+       UNNEST(
+      CASE 
+        WHEN extras LIKE '%,%' THEN STRING_TO_ARRAY(extras, ',')
+        ELSE ARRAY[extras] -- Treat as a single-element array
+      END
+    ) AS extras_unnested,
+    UNNEST(
+      CASE 
+        WHEN exclusions LIKE '%,%' THEN STRING_TO_ARRAY(exclusions, ',')
+        ELSE ARRAY[exclusions] -- Treat as a single-element array
+      END
+    ) AS exclusions_unnested
+  FROM 
+    pizza_runner.pizza_names AS pizza_names
+  JOIN 
+    pizza_runner.customer_orders AS orders
+  ON 
+    orders.pizza_id = pizza_names.pizza_id
+), exclusions_only AS (
+  SELECT 
+    order_id, 
+    pizza_name, 
+    STRING_AGG(topping_name, ', ') AS exclusions_list
+  FROM 
+    orders_extras_exclusions
+  JOIN pizza_runner.pizza_toppings AS toppings
+  ON CAST(orders_extras_exclusions.exclusions_unnested AS INT) = toppings.topping_id
+  WHERE 
+    exclusions_unnested <> 'null'
+  GROUP BY 
+    order_id, pizza_name
+), extras_only AS (
+  SELECT 
+    order_id, 
+    pizza_name, 
+    STRING_AGG(topping_name, ', ') AS extras_list
+  FROM 
+    orders_extras_exclusions
+  JOIN pizza_runner.pizza_toppings AS toppings
+  ON CAST(orders_extras_exclusions.extras_unnested AS INT) = toppings.topping_id
+  WHERE 
+    extras_unnested <> 'null'
+  GROUP BY 
+    order_id, pizza_name
+) SELECT 
+  orders.order_id, 
+  pizza_names.pizza_name,
+  COALESCE(
+    pizza_names.pizza_name || 
+    CASE 
+      WHEN exclusions_only.exclusions_list IS NOT NULL THEN ' - Exclude ' || exclusions_only.exclusions_list 
+      ELSE '' 
+    END ||
+    CASE 
+      WHEN extras_only.extras_list IS NOT NULL THEN ' - Extra ' || extras_only.extras_list 
+      ELSE '' 
+    END,
+    pizza_names.pizza_name
+  ) AS order_description
+FROM 
+  pizza_runner.customer_orders AS orders
+JOIN 
+  pizza_runner.pizza_names AS pizza_names ON orders.pizza_id = pizza_names.pizza_id
+LEFT JOIN 
+  exclusions_only ON orders.order_id = exclusions_only.order_id
+LEFT JOIN 
+  extras_only ON orders.order_id = extras_only.order_id;
 ```
 
 5. Generate an alphabetically ordered comma separated ingredient list for each pizza order from the customer_orders table and add a 2x in front of any relevant ingredients. For example: "Meat Lovers: 2xBacon, Beef, ... , Salami"
