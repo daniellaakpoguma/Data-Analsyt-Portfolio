@@ -246,7 +246,6 @@ b. Meat Lovers - Exclude Beef:
 c. Meat Lovers - Extra Bacon
 d. Meat Lovers - Exclude Cheese, Bacon - Extra Mushroom, Peppers
 ``` sql
--- Contemplating cusing dinstinct(), and count() in the extras_only and exlcusions() first to prevent duplicates
 UPDATE pizza_runner.customer_orders
 SET extras = NULL
 WHERE extras  = 'null' OR  extras  = '';
@@ -254,7 +253,6 @@ WHERE extras  = 'null' OR  extras  = '';
 UPDATE pizza_runner.customer_orders
 SET exclusions = NULL
 WHERE exclusions  = 'null' OR  exclusions  = '';
-
 
 WITH orders_extras_exclusions AS (
     SELECT 
@@ -264,13 +262,13 @@ WITH orders_extras_exclusions AS (
         UNNEST(
             CASE 
                 WHEN extras LIKE '%,%' THEN STRING_TO_ARRAY(extras, ',')
-                ELSE ARRAY[extras] -- Treat as a single-element array
+                ELSE ARRAY[extras]
             END
         ) AS extras_unnested,
         UNNEST(
             CASE 
                 WHEN exclusions LIKE '%,%' THEN STRING_TO_ARRAY(exclusions, ',')
-                ELSE ARRAY[exclusions] -- Treat as a single-element array
+                ELSE ARRAY[exclusions] 
             END
         ) AS exclusions_unnested
     FROM 
@@ -279,78 +277,71 @@ WITH orders_extras_exclusions AS (
         pizza_runner.customer_orders AS orders
     ON 
         orders.pizza_id = pizza_names.pizza_id
-), exclusions_only AS (
-    SELECT 
-        order_id, 
-        customer_id,
-        pizza_name, 
-        STRING_AGG(DISTINCT topping_name, ', ') AS exclusions_list
-    FROM 
-        orders_extras_exclusions
-    JOIN 
-        pizza_runner.pizza_toppings AS toppings
-    ON 
-        CAST(orders_extras_exclusions.exclusions_unnested AS INT) = toppings.topping_id
-    WHERE 
-        exclusions_unnested <> 'null'
-    GROUP BY 
-        order_id, customer_id, pizza_name
-), extras_only AS (
-    SELECT 
-        order_id, 
-        customer_id,
-        pizza_name, 
-        STRING_AGG(DISTINCT topping_name, ', ') AS extras_list
-    FROM 
-        orders_extras_exclusions
-    JOIN 
-        pizza_runner.pizza_toppings AS toppings
-    ON 
-        CAST(orders_extras_exclusions.extras_unnested AS INT) = toppings.topping_id
-    WHERE 
-        extras_unnested <> 'null'
-    GROUP BY 
-        order_id, customer_id, pizza_name
-)
+),  exclusions_only AS (
 SELECT 
-    orders.order_id, 
-    pizza_names.pizza_name,exclusions_only.exclusions_list, 
-    COALESCE(
-        pizza_names.pizza_name || 
-        CASE 
-            WHEN exclusions_only.exclusions_list IS NOT NULL THEN ' - Exclude ' || exclusions_only.exclusions_list 
-            ELSE '' 
-        END ||
-        CASE 
-            WHEN extras_only.extras_list IS NOT NULL THEN ' - Extra ' || extras_only.extras_list 
-            ELSE '' 
-        END,
-        pizza_names.pizza_name
-    ) AS order_description,
-    COUNT(*) AS identical_pizza_count 
+    order_id, 
+    customer_id,
+    pizza_name, 
+    STRING_AGG(DISTINCT topping_name, ', ') AS exclusions_list, 
+    COUNT(DISTINCT CAST(order_id AS TEXT) || CAST(customer_id AS TEXT) || pizza_name) AS pizza_count
 FROM 
-    pizza_runner.customer_orders AS orders
+    orders_extras_exclusions
 JOIN 
-    pizza_runner.pizza_names AS pizza_names 
+    pizza_runner.pizza_toppings AS toppings
 ON 
-    orders.pizza_id = pizza_names.pizza_id
-LEFT JOIN 
-    exclusions_only ON orders.order_id = exclusions_only.order_id AND orders.customer_id = exclusions_only.customer_id
-LEFT JOIN 
-    extras_only ON orders.order_id = extras_only.order_id AND orders.customer_id = extras_only.customer_id
+    CAST(orders_extras_exclusions.exclusions_unnested AS INT) = toppings.topping_id
+WHERE 
+    exclusions_unnested <> 'null'
 GROUP BY 
-    orders.order_id, 
-    pizza_names.pizza_name, 
-    exclusions_only.exclusions_list, 
-    extras_only.extras_list
-ORDER BY 
-    orders.order_id;  
+    order_id, customer_id, pizza_name
+ ), extras_only AS (
+  SELECT 
+    order_id, 
+    pizza_name, 
+    STRING_AGG(DISTINCT topping_name, ', ') AS extras_list,
+   COUNT(DISTINCT CAST(order_id AS TEXT) || CAST(customer_id AS TEXT) || pizza_name) AS pizza_count
+  FROM 
+    orders_extras_exclusions
+  JOIN pizza_runner.pizza_toppings AS toppings
+  ON CAST(orders_extras_exclusions.extras_unnested AS INT) = toppings.topping_id
+  WHERE 
+    extras_unnested <> 'null'
+  GROUP BY 
+    order_id, pizza_name
+) SELECT 
+  orders.order_id, 
+  pizza_names.pizza_name,
+  COALESCE(
+    pizza_names.pizza_name || 
+    CASE 
+      WHEN exclusions_only.exclusions_list IS NOT NULL THEN ' - Exclude ' || exclusions_only.exclusions_list 
+      ELSE '' 
+    END ||
+    CASE 
+      WHEN extras_only.extras_list IS NOT NULL THEN ' - Extra ' || extras_only.extras_list 
+      ELSE '' 
+    END,
+    pizza_names.pizza_name
+  ) AS order_description
+FROM 
+  pizza_runner.customer_orders AS orders
+JOIN 
+  pizza_runner.pizza_names AS pizza_names ON orders.pizza_id = pizza_names.pizza_id
+LEFT JOIN 
+  exclusions_only ON orders.order_id = exclusions_only.order_id
+LEFT JOIN 
+  extras_only ON orders.order_id = extras_only.order_id;
 ```
 
 5. Generate an alphabetically ordered comma separated ingredient list for each pizza order from the customer_orders table and add a 2x in front of any relevant ingredients. For example: "Meat Lovers: 2xBacon, Beef, ... , Salami"
 
 6. What is the total quantity of each ingredient used in all delivered pizzas sorted by most frequent first?
 ``` sql
+SELECT order_id, customer_id, orders.pizza_id, exclusions, extras, toppings
+FROM pizza_runner.customer_orders AS orders
+JOIN pizza_runner.pizza_recipes AS recipes
+ON orders.pizza_id = recipes.pizza_id
+ORDER BY order_id;
 ``` 
 
 ## D. Pricing and Ratings
