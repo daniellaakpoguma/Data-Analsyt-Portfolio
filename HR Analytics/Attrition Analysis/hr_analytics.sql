@@ -50,8 +50,6 @@ CREATE VIEW total_employees AS
 SELECT COUNT(*) AS total_employees
 FROM hr_employee_attrition;
 
-SELECT *
-FROM total_employees;
 # General Attrition Stats
 # Yes = Employees that have left the company
 # No = Employees that are still at the company
