@@ -1,9 +1,54 @@
 # HR Attrition Analysis
 This project aims to calculate the rate at which employees leave an organisation and identify the possible underlying reasons for their departure.
-(https://github.com/daniellaakpoguma/Data-Analsyt-Portfolio/blob/main/HR%20Analytics/cover_image.png)
 
 ## General Understanding
 This project uses a fictitious dataset downloaded from Kaggle (https://www.kaggle.com/datasets/rishikeshkonapure/hr-analytics-prediction). There is a column, 'Attrition'  with Yes = Employees that have left the company,  No = Employees that are still at the company
+```sql
+SELECT COUNT(*) AS no_of_employees
+FROM hr_employee_attrition;
+```
+
+```sql
+SELECT Department, COUNT(*) AS no_of_employees
+FROM hr_employee_attrition
+GROUP BY Department;
+```
+
+```sql
+SELECT MIN(Age), MAX(Age), AVG(Age)
+FROM hr_employee_attrition;
+```
+
+```sql
+CREATE VIEW age_group_summary AS
+SELECT CASE
+	WHEN Age >= 18 AND Age <= 25 THEN "18-25"
+	WHEN Age >= 25 AND Age <= 30 THEN "25-30"
+    WHEN Age >= 26 AND Age <= 40 THEN "26-40"
+    ELSE "41-60"
+END AS AgeGroup, Age, Department, EducationField, Gender, MaritalStatus, Attrition
+FROM hr_employee_attrition;
+```
+
+```sql
+# No of employees per age group
+SELECT AgeGroup, COUNT(*) AS no_of_employees
+FROM age_group_summary
+GROUP BY AgeGroup;
+```
+
+```sql
+# No of employees per education field
+SELECT EducationField, COUNT(*) AS no_of_employees
+FROM hr_employee_attrition
+GROUP BY EducationField;
+```
+```sql
+# No of employees by gender 
+SELECT Gender, COUNT(*) AS no_of_employees
+FROM hr_employee_attrition
+GROUP BY Gender;
+```
 
 ## Attrition Analysis
 ### Employee Attrition at a general company level
