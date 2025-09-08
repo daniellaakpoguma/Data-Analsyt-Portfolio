@@ -1,6 +1,6 @@
 # HR Attrition Analysis
 This project aims to calculate the rate at which employees leave an organisation and identify the possible underlying reasons for their departure.
-(cover_image.png)
+(https://github.com/daniellaakpoguma/Data-Analsyt-Portfolio/blob/main/HR%20Analytics/cover_image.png)
 
 ## General Understanding
 This project uses a fictitious dataset downloaded from Kaggle (https://www.kaggle.com/datasets/rishikeshkonapure/hr-analytics-prediction). There is a column, 'Attrition'  with Yes = Employees that have left the company,  No = Employees that are still at the company
