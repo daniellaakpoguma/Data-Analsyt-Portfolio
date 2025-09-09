@@ -1,6 +1,103 @@
 # HR Attrition Analysis
-This project aims to calculate the rate at which employees leave an organisation and identify the possible underlying reasons for their departure.
+Employee turnover is a major cost for organisations. Understanding which employees are at higher risk of leaving allows HR to implement targeted retention strategies. This project aims to do just that by calculating the rate at which employees leave an organisation and identifying the possible underlying reasons for their departure.
+
 ![cover image](cover_image.png)
+
+## Data Description
+- Source: Kaggle (https://www.kaggle.com/datasets/rishikeshkonapure/hr-analytics-prediction)
+<table>
+  <tr>
+    <td>
+	  - EmployeeNumber <br>
+      - Age <br>
+      - Attrition <br>
+      - BusinessTravel <br>
+      - DailyRate <br>
+      - Department <br>
+      - DistanceFromHome <br>
+      - Education <br>
+      - EducationField <br>
+      - EmployeeCount <br>
+      - EnvironmentSatisfaction
+    </td>
+    <td>
+      - Gender <br>
+      - HourlyRate <br>
+      - JobInvolvement <br>
+      - JobLevel <br>
+      - JobRole <br>
+      - JobSatisfaction <br>
+      - MaritalStatus <br>
+      - MonthlyIncome <br>
+      - MonthlyRate <br>
+      - NumCompaniesWorked <br>
+      - Over18
+    </td>
+    <td>
+      - OverTime <br>
+      - PercentSalaryHike <br>
+      - PerformanceRating <br>
+      - RelationshipSatisfaction <br>
+      - StandardHours <br>
+      - StockOptionLevel <br>
+      - TotalWorkingYears <br>
+      - TrainingTimesLastYear <br>
+      - WorkLifeBalance <br>
+      - YearsAtCompany <br>
+      - YearsInCurrentRole <br>
+      - YearsSinceLastPromotion <br>
+      - YearsWithCurrManager
+    </td>
+  </tr>
+</table>
+- The csv file was imported into MySQL Workbench in the 'hr_schema'
+
+## Methods
+- Data Cleaning:
+  	- Renaming columns: The 'Age' column was renamed to remove the character that was put during the import process.
+	 ```sql
+  	# Renaming Columns
+	ALTER TABLE hr_employee_attrition
+  	RENAME COLUMN `ï»¿Age` to `Age`;
+	 ```
+  	- Removing Duplicates: Duplicate rows were removed, based on 'EmployeeNumber'. No duplicates were found.
+  	```sql
+	SELECT EmployeeNumber
+	FROM hr_employee_attrition
+	GROUP BY EmployeeNumber
+	HAVING COUNT(*) > 1;
+   	```
+   - Deleting Redundant Columns: 'StandardHours' column was removed because every employee works 80 hours. 'Over18' column was removed because all employees are above 18. Performance Rating is also fairly constant with values being either 3 or 4, but I'm choosing to keep it.
+	 ```sql
+     # Deleting Redundant Columns
+	 ALTER TABLE hr_employee_attrition
+	 DROP COLUMN StandardHours;
+
+  	 ALTER TABLE hr_employee_attrition
+	 DROP COLUMN Over18;
+	
+	 ALTER TABLE hr_employee_attrition
+	 DROP COLUMN EmployeeCount;
+	 ```
+
+- Single-variable analysis: attrition rate by JobInvolvement, Department, Gender, etc.
+- Double-variable analysis: attrition by JobInvolvement × Department
+- Continuous-variable analysis: attrition vs YearsAtCompany, Salary
+- Derived metrics: 
+  - Attrition rate per group
+  - Risk ratio between groups
+  - Contribution to overall attrition
+- Cohort analysis: track retention by hire year over time
+- 
+---
+
+### 5️⃣ **Results / Insights**
+## Results
+- JobInvolvement=1 had the highest attrition (~33.7%)
+- Early tenure employees (<1 year) are leaving faster, indicating onboarding issues
+- Departments with high attrition: Sales and Customer Service
+- Risk factors identified: low job involvement, short tenure, specific job roles
+
 
 ## General Understanding
 This project uses a fictitious dataset downloaded from Kaggle (https://www.kaggle.com/datasets/rishikeshkonapure/hr-analytics-prediction). There is a column, 'Attrition'  with Yes = Employees that have left the company,  No = Employees that are still at the company
