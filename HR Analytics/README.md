@@ -91,9 +91,49 @@ ORDER BY Gender, Attrition ASC;
 ```
 
 ### Employee Attrition by age group
+The age group with the most employees is (26-40) with 619 employees, (41-60) with 465 employees, and so on. Like we did earlier, we are going to compare the stay-to-leave ratio.
+1. 18-25: 5.37:2.99 = 1.80: 1
+2. 25-30: 14.08:3.81 = 3.70: 1
+3. 26-40: 36.33: 5.78 = 6.29: 1
+4. 41-60: 28.10:3.54 = 7.94: 1
+
+the age group with more employees have more attrition which is expected. the mosta laraming has to be within age group 25-30 which has only 263 employees, less than half of the employees in the (26-40) age group but more than double the attrition rate
+
 ```sql
 SELECT AgeGroup, Attrition, Count(*) AS employee_count, ROUND(COUNT(*) * 100.0 / (SELECT total_employees FROM total_employees), 2) AS percentage
 FROM age_group_summary
 GROUP BY Attrition, AgeGroup
 ORDER BY AgeGroup, Attrition ASC;
+```
+
+### Employee Attrition by Job Level
+5 job levels, stay-to-leave ratio.
+1: 27.21: 9.73 = 2.80: 1 (543)
+2: 32.79 / 3.54 = 9.26:1 (534)
+3: 12.65 : 2.18 = 5.80 (218)
+4 : 6.87:0.34 = 20.20 (106)
+5: 4.35: 0.34 = 12.79 (69)
+
+This is unique out of all the sector where have done, where as the job level with the least amount of employees are the ones seeing higher attrition levels.
+
+```sql
+SELECT JobLevel, Attrition, Count(*) AS employee_count, ROUND(COUNT(*) * 100.0 / (SELECT total_employees FROM total_employees), 2) AS percentage
+FROM hr_employee_attrition
+GROUP BY Attrition, JobLevel
+ORDER BY JobLevel, Attrition ASC;
+```
+
+### Employee Attrition by Job Involvement
+1: 83 employees. 3.74:1.90 = 1.97
+2: 375 employees. 20.68:4.83 = 4.28
+3: 868 employees. 50.54:8.50 = 5.95
+4: 144 employees. 8.91:0.88 = 10.125 
+
+i think i did the wrong thing. and smaller values are considered employees leaving faster. i shoud use (left/total in that level)
+
+```sql
+SELECT JobInvolvement, Attrition, Count(*) AS employee_count, ROUND(COUNT(*) * 100.0 / (SELECT total_employees FROM total_employees), 2) AS percentage
+FROM hr_employee_attrition
+GROUP BY Attrition, JobInvolvement
+ORDER BY JobInvolvement, Attrition ASC;
 ```
