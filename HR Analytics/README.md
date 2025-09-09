@@ -80,41 +80,39 @@ Employee turnover is a major cost for organisations. Understanding which employe
 	 DROP COLUMN EmployeeCount;
 	 ```
 
-- Single-variable analysis: attrition rate by JobInvolvement, Department, Gender, etc.
-- Double-variable analysis: attrition by JobInvolvement × Department
-- Continuous-variable analysis: attrition vs YearsAtCompany, Salary
-- Derived metrics: 
-  - Attrition rate per group
-  - Risk ratio between groups
-  - Contribution to overall attrition
-- Cohort analysis: track retention by hire year over time
-- 
+(TO BE MADE BETTER LATER)
+- Data Analysis:
+  - We aim to uncover patterns in attrition by single-variable analysis and double-variable analysis
 ---
 
-### 5️⃣ **Results / Insights**
-## Results
-- JobInvolvement=1 had the highest attrition (~33.7%)
-- Early tenure employees (<1 year) are leaving faster, indicating onboarding issues
-- Departments with high attrition: Sales and Customer Service
-- Risk factors identified: low job involvement, short tenure, specific job roles
-
-
-## General Understanding
-This project uses a fictitious dataset downloaded from Kaggle (https://www.kaggle.com/datasets/rishikeshkonapure/hr-analytics-prediction). There is a column, 'Attrition'  with Yes = Employees that have left the company,  No = Employees that are still at the company
+## General Data Understanding
+Before we proceed, we want to gain a high-level understanding of the dataset by examining key metrics within this company's database. This step helps establish context and highlights any potential patterns or issues early on.
+- Total Number of Employees: 1470
 ```sql
 SELECT COUNT(*) AS no_of_employees
 FROM hr_employee_attrition;
 ```
-
+- Attrition Rate Overall: 16.12%
 ```sql
-SELECT Department, COUNT(*) AS no_of_employees
-FROM hr_employee_attrition
-GROUP BY Department;
+SELECT (CAST(SUM(CASE WHEN Attrition = 'Yes' THEN 1 ELSE 0 END) AS FLOAT) / COUNT(*)) * 100 AS attrition_rate
+FROM hr_employee_attrition;
 ```
-
+- Min, Max and Avg Age of Employees:
 ```sql
 SELECT MIN(Age), MAX(Age), AVG(Age)
 FROM hr_employee_attrition;
+```
+
+- Average years at company: 7 years
+- Average monthly income: $6,500
+- Most common job role: Sales Executive
+  
+- Gender distribution: 882 Male, 588 Female
+```sql
+# No of employees by gender 
+SELECT Gender, COUNT(*) AS no_of_employees
+FROM hr_employee_attrition
+GROUP BY Gender;
 ```
 
 ```sql
@@ -149,6 +147,13 @@ GROUP BY Gender;
 ```
 
 ## Attrition Analysis
+### 5️⃣ **Results / Insights**
+## Results
+- JobInvolvement=1 had the highest attrition (~33.7%)
+- Early tenure employees (<1 year) are leaving faster, indicating onboarding issues
+- Departments with high attrition: Sales and Customer Service
+- Risk factors identified: low job involvement, short tenure, specific job roles
+
 ### Employee Attrition at a general company level
 The company has a general attrition rate of 16.12% percent, with 83.88% of employees staying.
 ```sql
