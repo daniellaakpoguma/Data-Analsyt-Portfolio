@@ -1,21 +1,43 @@
 USE hr_schema;
 
+## DATA PREP
+# Renaming Columns
 ALTER TABLE hr_employee_attrition
 RENAME COLUMN `ï»¿Age` to `Age`;
 
-## General Stats
-# No of employees
+# Removing Duplicates
+SELECT EmployeeNumber
+FROM hr_employee_attrition
+GROUP BY EmployeeNumber
+HAVING COUNT(*) > 1;
+
+# Deleting Redundant Columns
+ALTER TABLE hr_employee_attrition
+DROP COLUMN StandardHours;
+
+ALTER TABLE hr_employee_attrition
+DROP COLUMN Over18;
+
+ALTER TABLE hr_employee_attrition
+DROP COLUMN EmployeeCount;
+
+## DATA UNDERSTANDING
+# Total No of employees
 SELECT COUNT(*) AS no_of_employees
 FROM hr_employee_attrition;
 
-# No of employees per department
-SELECT Department, COUNT(*) AS no_of_employees
-FROM hr_employee_attrition
-GROUP BY Department;
-
-# Age General Stats
+# 1. Attrtiton Rate Overall
+SELECT (CAST(SUM(CASE WHEN Attrition = 'Yes' THEN 1 ELSE 0 END) AS FLOAT) / COUNT(*)) * 100 AS attrition_rate
+FROM hr_employee_attrition;
+# 2. Age General Stats
 SELECT MIN(Age), MAX(Age), AVG(Age)
 FROM hr_employee_attrition;
+#3. No of employees by gender 
+SELECT Gender, COUNT(*) AS no_of_employees
+FROM hr_employee_attrition
+GROUP BY Gender;
+# 4. Average years at company
+
 
 # Create view for Age Group Summary 
 CREATE VIEW age_group_summary AS
@@ -40,15 +62,13 @@ SELECT EducationField, COUNT(*) AS no_of_employees
 FROM hr_employee_attrition
 GROUP BY EducationField;
 
-# No of employees by gender 
-SELECT Gender, COUNT(*) AS no_of_employees
-FROM hr_employee_attrition
-GROUP BY Gender;
-
 ## Attrition Insights
 CREATE VIEW total_employees AS
 SELECT COUNT(*) AS total_employees
 FROM hr_employee_attrition;
+
+SELECT *
+FROM total_employees;
 
 # General Attrition Stats
 # Yes = Employees that have left the company
