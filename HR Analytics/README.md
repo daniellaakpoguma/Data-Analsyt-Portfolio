@@ -144,26 +144,56 @@ GROUP BY Gender;
 
 ## Attrition Analysis
 In this section, we dive deeper into the dataset by examining individual variables that may influence employee attrition. By analysing one variable at a time, we aim to identify patterns and potential risk factors that could contribute to an employee’s decision to leave the company.
-# Personal Info
-### Employee Attrition by gender
-Female:  34.08 stay, 5.92 left = 5.76: 1 (588)
-Male: 49.80 stay, 10.20 left = 4.88:1 (882 employees)
-
-Takeaway: Female employees have a larger attrition rate, despite also being a limited number of employees
+### Personal Info
+#### Employee Attrition by gender
+In this analysis, we examine attrition rates based on employee gender to identify whether there are differences in turnover between female and male employees. Answers are to 2 decimal places.
+Female: (87/588)*100 = 14.80%
+Male: (150/882)*100 = 17.01%
 ```sql
 SELECT Gender, Attrition, Count(*) AS employee_count, ROUND(COUNT(*) * 100.0 / (SELECT total_employees FROM total_employees), 2) AS percentage
 FROM hr_employee_attrition
 GROUP BY Attrition, Gender
 ORDER BY Gender, Attrition ASC;
 ```
+- Male employees have a slightly higher attrition rate, which is expected given that there are more male employees in the dataset (882 males vs. 588 females, roughly a 1.5:1 ratio).
+- When comparing attrition rates directly, male employees have an attrition rate of 17.01% versus 14.80% for female employees (approximately a 1.15:1 ratio).
+- The difference is relatively small, suggesting that gender alone does not appear to be a significant factor in employee retention for this dataset.
 
-### 5️⃣ **Results / Insights**
-## Results
-- JobInvolvement=1 had the highest attrition (~33.7%)
-- Early tenure employees (<1 year) are leaving faster, indicating onboarding issues
-- Departments with high attrition: Sales and Customer Service
-- Risk factors identified: low job involvement, short tenure, specific job roles
+#### Employee Attrition by age group
+In this analysis, we examine attrition rates based on age groups to identify whether there are differences in turnover between employees of different ages. First, we have to create an age group column from the 'Age' column given.
+```sql
+# Create View for Age Group Summary 
+CREATE VIEW age_group_summary AS
+SELECT CASE
+	WHEN Age >= 18 AND Age <= 25 THEN "18-25"
+	WHEN Age >= 25 AND Age <= 30 THEN "25-30"
+    WHEN Age >= 26 AND Age <= 40 THEN "26-40"
+    ELSE "41-60"
+END AS AgeGroup, Age, Department, EducationField, Gender, MaritalStatus, Attrition
+FROM hr_employee_attrition;
 
+# Testing of view
+SELECT * FROM age_group_summary;
+
+# No of employees per age group
+SELECT AgeGroup, COUNT(*) AS no_of_employees
+FROM age_group_summary
+GROUP BY AgeGroup;
+```
+The age group with the most employees is (26-40) with 619 employees, (41-60) with 465 employees, and so on. Like we did earlier, we are going to compare the stay-to-leave ratio.
+1. 18-25: 5.37:2.99 = 1.80: 1
+2. 25-30: 14.08:3.81 = 3.70: 1
+3. 26-40: 36.33: 5.78 = 6.29: 1
+4. 41-60: 28.10:3.54 = 7.94: 1
+
+the age group with more employees have more attrition which is expected. the mosta laraming has to be within age group 25-30 which has only 263 employees, less than half of the employees in the (26-40) age group but more than double the attrition rate
+
+```sql
+SELECT AgeGroup, Attrition, Count(*) AS employee_count, ROUND(COUNT(*) * 100.0 / (SELECT total_employees FROM total_employees), 2) AS percentage
+FROM age_group_summary
+GROUP BY Attrition, AgeGroup
+ORDER BY AgeGroup, Attrition ASC;
+```
 
 ### Employee Attrition by department
 There are three departments of varying sizes, with Research & Development being the highest, so best is ratio (sTAY-TO-LEAVE)rounded to 2 decimals:
@@ -186,21 +216,7 @@ ORDER BY Department, Attrition ASC;
 
 
 
-### Employee Attrition by age group
-The age group with the most employees is (26-40) with 619 employees, (41-60) with 465 employees, and so on. Like we did earlier, we are going to compare the stay-to-leave ratio.
-1. 18-25: 5.37:2.99 = 1.80: 1
-2. 25-30: 14.08:3.81 = 3.70: 1
-3. 26-40: 36.33: 5.78 = 6.29: 1
-4. 41-60: 28.10:3.54 = 7.94: 1
 
-the age group with more employees have more attrition which is expected. the mosta laraming has to be within age group 25-30 which has only 263 employees, less than half of the employees in the (26-40) age group but more than double the attrition rate
-
-```sql
-SELECT AgeGroup, Attrition, Count(*) AS employee_count, ROUND(COUNT(*) * 100.0 / (SELECT total_employees FROM total_employees), 2) AS percentage
-FROM age_group_summary
-GROUP BY Attrition, AgeGroup
-ORDER BY AgeGroup, Attrition ASC;
-```
 
 ### Employee Attrition by Job Level
 5 job levels, stay-to-leave ratio.
