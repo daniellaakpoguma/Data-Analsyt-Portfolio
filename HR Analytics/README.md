@@ -144,9 +144,19 @@ GROUP BY Gender;
 
 ## Attrition Analysis
 In this section, we dive deeper into the dataset by examining individual variables that may influence employee attrition. By analysing one variable at a time, we aim to identify patterns and potential risk factors that could contribute to an employee’s decision to leave the company.
+# Personal Info
+### Employee Attrition by gender
+Female:  34.08 stay, 5.92 left = 5.76: 1 (588)
+Male: 49.80 stay, 10.20 left = 4.88:1 (882 employees)
 
+Takeaway: Female employees have a larger attrition rate, despite also being a limited number of employees
+```sql
+SELECT Gender, Attrition, Count(*) AS employee_count, ROUND(COUNT(*) * 100.0 / (SELECT total_employees FROM total_employees), 2) AS percentage
+FROM hr_employee_attrition
+GROUP BY Attrition, Gender
+ORDER BY Gender, Attrition ASC;
+```
 
-## Attrition Analysis
 ### 5️⃣ **Results / Insights**
 ## Results
 - JobInvolvement=1 had the highest attrition (~33.7%)
@@ -174,17 +184,7 @@ GROUP BY Attrition, Department
 ORDER BY Department, Attrition ASC;
 ```
 
-### Employee Attrition by gender
-Female:  34.08 stay, 5.92 left = 5.76: 1 (588)
-Male: 49.80 stay, 10.20 left = 4.88:1 (882 employees)
 
-Takeaway: Female employees have a larger attrition rate, despite also being a limited number of employees
-```sql
-SELECT Gender, Attrition, Count(*) AS employee_count, ROUND(COUNT(*) * 100.0 / (SELECT total_employees FROM total_employees), 2) AS percentage
-FROM hr_employee_attrition
-GROUP BY Attrition, Gender
-ORDER BY Gender, Attrition ASC;
-```
 
 ### Employee Attrition by age group
 The age group with the most employees is (26-40) with 619 employees, (41-60) with 465 employees, and so on. Like we did earlier, we are going to compare the stay-to-leave ratio.
