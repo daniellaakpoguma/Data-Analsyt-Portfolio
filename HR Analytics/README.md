@@ -1,7 +1,7 @@
 # HR Attrition Analysis
 Employee turnover is a major cost for organisations. Understanding which employees are at higher risk of leaving allows HR to implement targeted retention strategies. This project aims to do just that by calculating the rate at which employees leave an organisation and identifying the possible underlying reasons for their departure.
 
-![cover image](cover_image.png)
+![Cover Image](images/cover_image.png)
 
 ## Data Description
 - Source: Kaggle (https://www.kaggle.com/datasets/rishikeshkonapure/hr-analytics-prediction)
@@ -67,7 +67,7 @@ Employee turnover is a major cost for organisations. Understanding which employe
 	GROUP BY EmployeeNumber
 	HAVING COUNT(*) > 1;
    	```
-   - Deleting Redundant Columns: 'StandardHours' column was removed because every employee works 80 hours. 'Over18' column was removed because all employees are above 18. Performance Rating is also fairly constant with values being either 3 or 4, but I'm choosing to keep it.
+   - Deleting Redundant Columns: 'StandardHours' column was removed because every employee works 80 hours. 'Over18' column was removed because all employees are above 18. 'PerformanceRating' is also fairly constant with values being either 3 or 4, but I'm choosing to keep it.
 	 ```sql
      # Deleting Redundant Columns
 	 ALTER TABLE hr_employee_attrition
@@ -88,63 +88,63 @@ Employee turnover is a major cost for organisations. Understanding which employe
 ## General Data Understanding
 Before we proceed, we want to gain a high-level understanding of the dataset by examining key metrics within this company's database. This step helps establish context and highlights any potential patterns or issues early on.
 - Total Number of Employees: 1470
+![Employee Number](images/general_employee_count.png)
 ```sql
 SELECT COUNT(*) AS no_of_employees
 FROM hr_employee_attrition;
 ```
 - Attrition Rate Overall: 16.12%
+![General Attrition](images/general_employee_count.png)
 ```sql
 SELECT (CAST(SUM(CASE WHEN Attrition = 'Yes' THEN 1 ELSE 0 END) AS FLOAT) / COUNT(*)) * 100 AS attrition_rate
 FROM hr_employee_attrition;
 ```
 - Min, Max and Avg Age of Employees:
+![ages](images/min-max-avg-age.png)
 ```sql
 SELECT MIN(Age), MAX(Age), AVG(Age)
 FROM hr_employee_attrition;
 ```
 
 - Average years at company: 7 years
-- Average monthly income: $6,500
-- Most common job role: Sales Executive
-  
-- Gender distribution: 882 Male, 588 Female
 ```sql
-# No of employees by gender 
-SELECT Gender, COUNT(*) AS no_of_employees
-FROM hr_employee_attrition
-GROUP BY Gender;
-```
-
-```sql
-CREATE VIEW age_group_summary AS
-SELECT CASE
-	WHEN Age >= 18 AND Age <= 25 THEN "18-25"
-	WHEN Age >= 25 AND Age <= 30 THEN "25-30"
-    WHEN Age >= 26 AND Age <= 40 THEN "26-40"
-    ELSE "41-60"
-END AS AgeGroup, Age, Department, EducationField, Gender, MaritalStatus, Attrition
+SELECT AVG(YearsAtCompany)  AS average_years_at_working
 FROM hr_employee_attrition;
 ```
 
+- Average monthly income: $6,500
 ```sql
-# No of employees per age group
-SELECT AgeGroup, COUNT(*) AS no_of_employees
-FROM age_group_summary
-GROUP BY AgeGroup;
+SELECT AVG(MonthlyIncome) AS avg_monthly_income
+FROM  hr_employee_attrition
 ```
 
+- Most common job role: Sales Executive
 ```sql
-# No of employees per education field
+SELECT JobRole, COUNT(*)
+FROM  hr_employee_attrition
+GROUP BY JobRole;
+```
+
+- Most common education field: Life Sciences
+![Education Field Distribution](images/no_of_employees_education_field.png)
+```sql
 SELECT EducationField, COUNT(*) AS no_of_employees
 FROM hr_employee_attrition
 GROUP BY EducationField;
 ```
+  
+- Gender distribution: 882 Male, 588 Female
+![Gender Distribution](images/employees_by_gender.png)
 ```sql
 # No of employees by gender 
 SELECT Gender, COUNT(*) AS no_of_employees
 FROM hr_employee_attrition
 GROUP BY Gender;
 ```
+
+## Attrition Analysis
+In this section, we dive deeper into the dataset by examining individual variables that may influence employee attrition. By analysing one variable at a time, we aim to identify patterns and potential risk factors that could contribute to an employee’s decision to leave the company.
+
 
 ## Attrition Analysis
 ### 5️⃣ **Results / Insights**
@@ -154,13 +154,6 @@ GROUP BY Gender;
 - Departments with high attrition: Sales and Customer Service
 - Risk factors identified: low job involvement, short tenure, specific job roles
 
-### Employee Attrition at a general company level
-The company has a general attrition rate of 16.12% percent, with 83.88% of employees staying.
-```sql
-SELECT Attrition, COUNT(*) AS employee_count, ROUND(COUNT(*) * 100.0 / (SELECT total_employees FROM total_employees), 2) AS percentage
-FROM hr_employee_attrition
-GROUP BY Attrition;
-```
 
 ### Employee Attrition by department
 There are three departments of varying sizes, with Research & Development being the highest, so best is ratio (sTAY-TO-LEAVE)rounded to 2 decimals:
