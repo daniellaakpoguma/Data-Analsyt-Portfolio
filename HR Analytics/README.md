@@ -195,7 +195,8 @@ GROUP BY Attrition, AgeGroup
 ORDER BY AgeGroup, Attrition ASC;
 ```
 
-### Employee Attrition by department
+## Job Info
+#### Employee Attrition by department
 There are three departments of varying sizes, with Research & Development being the highest, so best is ratio (sTAY-TO-LEAVE)rounded to 2 decimals:
 Research & Development: 56.33: 9.05 = 6.22 : 1
 Sales: 24.08: 6.26 = 3.85 : 1
@@ -213,12 +214,7 @@ FROM hr_employee_attrition
 GROUP BY Attrition, Department
 ORDER BY Department, Attrition ASC;
 ```
-
-
-
-
-
-### Employee Attrition by Job Level
+#### Employee Attrition by Job Level
 5 job levels, stay-to-leave ratio.
 1: 27.21: 9.73 = 2.80: 1 (543)
 2: 32.79 / 3.54 = 9.26:1 (534)
@@ -235,7 +231,7 @@ GROUP BY Attrition, JobLevel
 ORDER BY JobLevel, Attrition ASC;
 ```
 
-### Employee Attrition by Job Involvement
+#### Employee Attrition by Job Involvement
 1: 83 employees. 3.74:1.90 = 1.97
 2: 375 employees. 20.68:4.83 = 4.28
 3: 868 employees. 50.54:8.50 = 5.95
