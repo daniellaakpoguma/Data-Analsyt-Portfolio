@@ -50,7 +50,7 @@ Employee turnover is a major cost for organisations. Understanding which employe
     </td>
   </tr>
 </table>
-- The csv file was imported into MySQL Workbench in the 'hr_schema'
+- The CSV file was imported into MySQL Workbench in the 'hr_schema'
 
 ## Methods
 - Data Cleaning:
@@ -79,7 +79,6 @@ Employee turnover is a major cost for organisations. Understanding which employe
 	 ALTER TABLE hr_employee_attrition
 	 DROP COLUMN EmployeeCount;
 	 ```
-
 (TO BE MADE BETTER LATER)
 - Data Analysis:
   - We aim to uncover patterns in attrition by single-variable analysis and double-variable analysis
@@ -105,34 +104,6 @@ FROM hr_employee_attrition;
 SELECT MIN(Age), MAX(Age), AVG(Age)
 FROM hr_employee_attrition;
 ```
-
-- Average years at company: 7 years
-```sql
-SELECT AVG(YearsAtCompany)  AS average_years_at_working
-FROM hr_employee_attrition;
-```
-
-- Average monthly income: $6,500
-```sql
-SELECT AVG(MonthlyIncome) AS avg_monthly_income
-FROM  hr_employee_attrition
-```
-
-- Most common job role: Sales Executive
-```sql
-SELECT JobRole, COUNT(*)
-FROM  hr_employee_attrition
-GROUP BY JobRole;
-```
-
-- Most common education field: Life Sciences
-![Education Field Distribution](images/no_of_employees_education_field.png)
-```sql
-SELECT EducationField, COUNT(*) AS no_of_employees
-FROM hr_employee_attrition
-GROUP BY EducationField;
-```
-  
 - Gender distribution: 882 Male, 588 Female
 ![Gender Distribution](images/employees_by_gender.png)
 ```sql
@@ -141,6 +112,36 @@ SELECT Gender, COUNT(*) AS no_of_employees
 FROM hr_employee_attrition
 GROUP BY Gender;
 ```
+- No of employees by gender
+```sql
+SELECT Gender, COUNT(*) AS no_of_employees
+FROM hr_employee_attrition
+GROUP BY Gender;
+```
+- Average years at company: 7 years
+```sql
+SELECT AVG(YearsAtCompany)  AS average_years_at_working
+FROM hr_employee_attrition;
+```
+- Average monthly income: $6,500
+```sql
+SELECT AVG(MonthlyIncome) AS avg_monthly_income
+FROM  hr_employee_attrition
+```
+- Most common job role: Sales Executive
+```sql
+SELECT JobRole, COUNT(*)
+FROM  hr_employee_attrition
+GROUP BY JobRole;
+```
+- Most common education field: Life Sciences
+![Education Field Distribution](images/no_of_employees_education_field.png)
+```sql
+SELECT EducationField, COUNT(*) AS no_of_employees
+FROM hr_employee_attrition
+GROUP BY EducationField;
+```
+
 
 ## Attrition Analysis
 In this section, we dive deeper into the dataset by examining individual variables that may influence employee attrition. By analysing one variable at a time, we aim to identify patterns and potential risk factors that could contribute to an employee’s decision to leave the company.
