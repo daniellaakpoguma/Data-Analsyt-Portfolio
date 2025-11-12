@@ -204,12 +204,12 @@ FROM hr_employee_attrition
 GROUP BY Attrition, EducationField
 ORDER BY EducationField, Attrition ASC;
 ```
-- Human Resources: (7/27)*100 = 25.93%
-- Life Sciences: (89/606)*100 = 14.69%
-- Marketing: (35/159)*100 = 22.01%
-- Medical: (63/464)*100 = 13.58%
-- Technical Degree: (32/132)*100 =24.24%
-- Other: (11/82)*100 = 13.41%
+1. Human Resources: (7/27)*100 = 25.93%
+2. Life Sciences: (89/606)*100 = 14.69%
+3. Marketing: (35/159)*100 = 22.01%
+4. Medical: (63/464)*100 = 13.58%
+5. Technical Degree: (32/132)*100 =24.24%
+6. Other: (11/82)*100 = 13.41%
 - Human Resources (25.93%) and Technical Degrees (24.24%) have the highest attrition rates, suggesting employees from these fields may face strong external job opportunities or limited growth within the company.
 - Marketing (22.01%) also shows relatively high turnover, which could be due to the fast-paced and competitive nature of the field, where job changes are common for career advancement.
 - Life Sciences (14.69%), Medical (13.58%), and Other (13.41%) fields show lower attrition rates, likely reflecting greater job stability, specialised skills, or stronger commitment to their professions
@@ -222,9 +222,9 @@ FROM hr_employee_attrition
 GROUP BY Attrition, MaritalStatus
 ORDER BY MaritalStatus, Attrition ASC;
 ```
-- Single: (120/470)*100 =25.53%
-- Married: (84/673)*100 = 12.48%
-- Divorced: (33/327)*100 = 10.09%
+1. Single: (120/470)*100 =25.53%
+2. Married: (84/673)*100 = 12.48%
+3. Divorced: (33/327)*100 = 10.09%
 - Single employees (25.53%) have the highest attrition rate, suggesting they may be more likely to change jobs for better opportunities, relocation, or career growth since they often have fewer personal or family commitments.
 - Married employees (12.48%) show a much lower attrition rate, possibly due to a greater desire for stability, financial security, and work-life balance.
 - Divorced employees (10.09%) have the lowest attrition, which may reflect a stronger focus on job stability or established career roots.
