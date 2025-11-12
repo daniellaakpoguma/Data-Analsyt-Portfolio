@@ -214,7 +214,22 @@ ORDER BY EducationField, Attrition ASC;
 - Marketing (22.01%) also shows relatively high turnover, which could be due to the fast-paced and competitive nature of the field, where job changes are common for career advancement.
 - Life Sciences (14.69%), Medical (13.58%), and Other (13.41%) fields show lower attrition rates, likely reflecting greater job stability, specialised skills, or stronger commitment to their professions
 
-## Job Info
+#### Employee Attrition by Marital Status
+In this analysis, we examine attrition rates based on marital status to identify whether there are differences in turnover between employees of different marital statuses. 
+```sql
+SELECT MaritalStatus, Attrition, Count(*) AS employee_count, ROUND(COUNT(*) * 100.0 / (SELECT total_employees FROM total_employees), 2) AS percentage
+FROM hr_employee_attrition
+GROUP BY Attrition, MaritalStatus
+ORDER BY MaritalStatus, Attrition ASC;
+```
+- Single: (120/470)*100 =25.53%
+- Married: (84/673)*100 = 12.48%
+- Divorced: (33/327)*100 = 10.09%
+- Single employees (25.53%) have the highest attrition rate, suggesting they may be more likely to change jobs for better opportunities, relocation, or career growth since they often have fewer personal or family commitments.
+- Married employees (12.48%) show a much lower attrition rate, possibly due to a greater desire for stability, financial security, and work-life balance.
+- Divorced employees (10.09%) have the lowest attrition, which may reflect a stronger focus on job stability or established career roots.
+
+### Job Info
 #### Employee Attrition by department
 There are three departments of varying sizes, with Research & Development being the highest, so best is ratio (sTAY-TO-LEAVE)rounded to 2 decimals:
 Research & Development: 56.33: 9.05 = 6.22 : 1
