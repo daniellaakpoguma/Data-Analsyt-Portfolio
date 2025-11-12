@@ -145,6 +145,7 @@ GROUP BY EducationField;
 
 ## Attrition Analysis
 In this section, we dive deeper into the dataset by examining individual variables that may influence employee attrition. By analysing one variable at a time, we aim to identify patterns and potential risk factors that could contribute to an employee’s decision to leave the company.
+
 ### Personal Info
 #### Employee Attrition by gender
 In this analysis, we examine attrition rates based on employee gender to identify whether there are differences in turnover between female and male employees. Answers are to 2 decimal places.
@@ -194,6 +195,24 @@ ORDER BY AgeGroup, Attrition ASC;
 - Employees aged 18–25 (35.77%) have the highest attrition rate, suggesting younger workers are more likely to leave, possibly due to career exploration, short-term contracts, or pursuit of better opportunities.
 - Ages 25–30 (21.29%) also show relatively high attrition, which may reflect employees seeking career advancement or higher pay after gaining some experience.
 - Ages 26–40 (13.73%) and 41–60 (11.18%) have lower attrition rates, indicating that mid-career and older employees tend to be more stable, possibly due to stronger job commitment, family responsibilities, or satisfaction with their roles.
+
+#### Employee Attrition by Educational Field
+In this analysis, we examine attrition rates based on educational field to identify whether there are differences in turnover between employees of different academic backgrounds.
+```sql
+SELECT EducationField, Attrition, Count(*) AS employee_count, ROUND(COUNT(*) * 100.0 / (SELECT total_employees FROM total_employees), 2) AS percentage
+FROM hr_employee_attrition
+GROUP BY Attrition, EducationField
+ORDER BY EducationField, Attrition ASC;
+```
+- Human Resources: (7/27)*100 = 25.93%
+- Life Sciences: (89/606)*100 = 14.69%
+- Marketing: (35/159)*100 = 22.01%
+- Medical: (63/464)*100 = 13.58%
+- Technical Degree: (32/132)*100 =24.24%
+- Other: (11/82)*100 = 13.41%
+- Human Resources (25.93%) and Technical Degrees (24.24%) have the highest attrition rates, suggesting employees from these fields may face strong external job opportunities or limited growth within the company.
+- Marketing (22.01%) also shows relatively high turnover, which could be due to the fast-paced and competitive nature of the field, where job changes are common for career advancement.
+- Life Sciences (14.69%), Medical (13.58%), and Other (13.41%) fields show lower attrition rates, likely reflecting greater job stability, specialised skills, or stronger commitment to their professions
 
 ## Job Info
 #### Employee Attrition by department
