@@ -181,20 +181,19 @@ SELECT AgeGroup, COUNT(*) AS no_of_employees
 FROM age_group_summary
 GROUP BY AgeGroup;
 ```
-The age group with the most employees is (26-40) with 619 employees, (41-60) with 465 employees, and so on. Like we did earlier, we are going to compare the stay-to-leave ratio.
-1. 18-25: 5.37:2.99 = 1.80: 1
-2. 25-30: 14.08:3.81 = 3.70: 1
-3. 26-40: 36.33: 5.78 = 6.29: 1
-4. 41-60: 28.10:3.54 = 7.94: 1
-
-the age group with more employees have more attrition which is expected. the mosta laraming has to be within age group 25-30 which has only 263 employees, less than half of the employees in the (26-40) age group but more than double the attrition rate
-
 ```sql
 SELECT AgeGroup, Attrition, Count(*) AS employee_count, ROUND(COUNT(*) * 100.0 / (SELECT total_employees FROM total_employees), 2) AS percentage
 FROM age_group_summary
 GROUP BY Attrition, AgeGroup
 ORDER BY AgeGroup, Attrition ASC;
 ```
+1. 18-25: (44/123)*100 = 35.77%
+2. 25-30: (56/263)*100 = 21.29%
+3. 26-40: (85/619)*100 = 13.73%
+4. 41-60: (52/465)*100 = 11.18%
+- Employees aged 18–25 (35.77%) have the highest attrition rate, suggesting younger workers are more likely to leave, possibly due to career exploration, short-term contracts, or pursuit of better opportunities.
+- Ages 25–30 (21.29%) also show relatively high attrition, which may reflect employees seeking career advancement or higher pay after gaining some experience.
+- Ages 26–40 (13.73%) and 41–60 (11.18%) have lower attrition rates, indicating that mid-career and older employees tend to be more stable, possibly due to stronger job commitment, family responsibilities, or satisfaction with their roles.
 
 ## Job Info
 #### Employee Attrition by department
