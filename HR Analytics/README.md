@@ -87,25 +87,21 @@ Employee turnover is a major cost for organisations. Understanding which employe
 ## General Data Understanding
 Before we proceed, we want to gain a high-level understanding of the dataset by examining key metrics within this company's database. This step helps establish context and highlights any potential patterns or issues early on.
 - Total Number of Employees: 1470
-![Employee Number](Attrition%20Analysis/images/general_employee_count.png)
 ```sql
 SELECT COUNT(*) AS no_of_employees
 FROM hr_employee_attrition;
 ```
 - Attrition Rate Overall: 16.12%
-![General Attrition](Attrition%20Analysis/images/general_employee_count.png)
 ```sql
 SELECT (CAST(SUM(CASE WHEN Attrition = 'Yes' THEN 1 ELSE 0 END) AS FLOAT) / COUNT(*)) * 100 AS attrition_rate
 FROM hr_employee_attrition;
 ```
 - Min, Max and Avg Age of Employees:
-![ages](Attrition%20Analysis/images/min-max-avg-age.png)
 ```sql
 SELECT MIN(Age), MAX(Age), AVG(Age)
 FROM hr_employee_attrition;
 ```
 - Gender distribution: 882 Male, 588 Female
-![Gender Distribution](Attrition%20Analysis/images/employees_by_gender.png)
 ```sql
 # No of employees by gender 
 SELECT Gender, COUNT(*) AS no_of_employees
@@ -123,14 +119,12 @@ SELECT AVG(MonthlyIncome) AS avg_monthly_income
 FROM  hr_employee_attrition
 ```
 - Most common job role: Sales Executive
-![Common_Job_Role](Attrition%20Analysis/images/\most_common_job_role.png)
 ```sql
 SELECT JobRole, COUNT(*)
 FROM  hr_employee_attrition
 GROUP BY JobRole;
 ```
 - Most common education field: Life Sciences
-![Education Field Distribution](Attrition%20Analysis/images/no_of_employees_education_field.png)
 ```sql
 SELECT EducationField, COUNT(*) AS no_of_employees
 FROM hr_employee_attrition
