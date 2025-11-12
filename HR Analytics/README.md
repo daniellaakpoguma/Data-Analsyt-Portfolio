@@ -230,26 +230,23 @@ ORDER BY MaritalStatus, Attrition ASC;
 - Divorced employees (10.09%) have the lowest attrition, which may reflect a stronger focus on job stability or established career roots.
 
 ### Job Info
-#### Employee Attrition by department
-There are three departments of varying sizes, with Research & Development being the highest, so best is ratio (sTAY-TO-LEAVE)rounded to 2 decimals:
-Research & Development: 56.33: 9.05 = 6.22 : 1
-Sales: 24.08: 6.26 = 3.85 : 1
-Human Resources: 3.47: 0.82  = 4.23 : 1
-
-1. Research & Development (961 employees) has the highest stay-to-leave ratio (6.22:1), which reflects strong retention overall. Given its large workforce, the attrition observed here is not alarming.
-2, Human Resources (63 employees) shows a moderate ratio (4.23:1). While the absolute number of leavers is small, the impact on such a small department can be significant, making attrition here more concerning.
-3. Sales (442 employees) has the lowest ratio (3.85:1), indicating higher relative attrition compared to the other departments. Given its mid-size workforce, this trend could point to structural or cultural issues that warrant closer attention.
-
-Takeaway: Although attrition in Research & Development is highest in absolute terms, the real concern lies in Sales and Human Resources, where smaller team sizes magnify the effect of employee departures.
-
+#### Employee Attrition by Department
+In this analysis, we examine attrition rates based on departments to identify whether there are differences in turnover between employees of different departments. 
 ```sql
 SELECT Department, Attrition, Count(*) AS employee_count, ROUND(COUNT(*) * 100.0 / (SELECT total_employees FROM total_employees), 2) AS percentage
 FROM hr_employee_attrition
 GROUP BY Attrition, Department
 ORDER BY Department, Attrition ASC;
 ```
+1. Human Resources: (12/63)*100 = 19.05%
+2. Research & Development: (133/961)*100 = 13.84%
+3. Sales: (92/446)*100 = 20.63%
+- Sales (20.63%) has the highest attrition rate, which may be linked to high performance pressure, frequent burnout, and the competitive nature of sales roles that often drive employees to switch companies for better pay or incentives.
+- Human Resources (19.05%) also shows relatively high attrition, possibly due to limited advancement opportunities or HR professionals seeking new experiences in different organizations.
+- Research & Development (13.84%) has the lowest attrition rate, suggesting that employees in this department may experience greater job satisfaction, strong engagement with their work, or more specialized skill requirements that promote stability.
+  
 #### Employee Attrition by Job Level
-5 job levels, stay-to-leave ratio.
+In this analysis, we examine attrition rates based on job levels to identify whether there are differences in turnover between employees of different job levels
 1: 27.21: 9.73 = 2.80: 1 (543)
 2: 32.79 / 3.54 = 9.26:1 (534)
 3: 12.65 : 2.18 = 5.80 (218)
