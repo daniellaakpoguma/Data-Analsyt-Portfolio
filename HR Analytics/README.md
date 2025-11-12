@@ -247,20 +247,21 @@ ORDER BY Department, Attrition ASC;
   
 #### Employee Attrition by Job Level
 In this analysis, we examine attrition rates based on job levels to identify whether there are differences in turnover between employees of different job levels
-1: 27.21: 9.73 = 2.80: 1 (543)
-2: 32.79 / 3.54 = 9.26:1 (534)
-3: 12.65 : 2.18 = 5.80 (218)
-4 : 6.87:0.34 = 20.20 (106)
-5: 4.35: 0.34 = 12.79 (69)
-
-This is unique out of all the sector where have done, where as the job level with the least amount of employees are the ones seeing higher attrition levels.
-
 ```sql
 SELECT JobLevel, Attrition, Count(*) AS employee_count, ROUND(COUNT(*) * 100.0 / (SELECT total_employees FROM total_employees), 2) AS percentage
 FROM hr_employee_attrition
 GROUP BY Attrition, JobLevel
 ORDER BY JobLevel, Attrition ASC;
 ```
+1: (143/543)*100 = 26.34%
+2: (52/534)*100 = 9.74%
+3: (32/218)*100 = 14.68%
+4: (5/106)*100 = 4.72%
+5: (5/69)*100 = 7.25%
+- Job Level 1 (26.34%) shows the highest attrition rate, indicating that entry-level employees are the most likely to leave, often due to limited experience, lower pay, or seeking better career opportunities.
+- Job Level 2 (9.74%) and Level 3 (14.68%) have moderate attrition, suggesting that as employees gain experience, turnover decreases but may still occur due to career advancement or job dissatisfaction.
+- Job Levels 4 (4.72%) and 5 (7.25%) have the lowest attrition, showing that senior and management-level employees tend to stay longer, likely due to higher job security, satisfaction, and organizational commitment.
+
 
 #### Employee Attrition by Job Involvement
 1: 83 employees. 3.74:1.90 = 1.97
