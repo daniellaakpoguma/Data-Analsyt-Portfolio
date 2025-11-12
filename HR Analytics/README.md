@@ -327,3 +327,19 @@ ORDER BY attrition_percentage DESC;
 - Low income (21.76%) has the highest attrition rate, suggesting that employees with lower pay are more likely to leave, possibly due to financial pressures or the pursuit of better-paying opportunities.
 - Medium income (13.51%) and High income (11.14%) show moderate attrition, indicating that as monthly income increases, employees are generally more likely to stay.
 - Very High income (3.76%) has the lowest attrition, reflecting that employees with the highest earnings are the most stable and committed, likely due to strong compensation and benefits.
+
+#### Employee Attrition by Stock Level Options
+In this analysis, we examine attrition rates based on stock level options:
+```sql
+SELECT StockOptionLevel, Attrition, Count(*) AS employee_count, ROUND(COUNT(*) * 100.0 / (SELECT total_employees FROM total_employees), 2) AS percentage
+FROM hr_employee_attrition
+GROUP BY Attrition, StockOptionLevel
+ORDER BY StockOptionLevel, Attrition ASC;
+```
+1. 0: (154/631)*100 = 24.41%
+2. 1: (56/596)*100 = 9.40%
+3. 2: (12/158)*100 = 7.60%
+4. 3: (15/85)*100 = 17.65%
+- Employees with 0 stock options (24.41%) have the highest attrition rate, suggesting that not having equity or ownership incentives may make employees more likely to leave for opportunities that offer financial rewards or long-term benefits.
+- Stock level 1 (9.40%) and level 2 (7.60%) show low attrition, indicating that even a small number of stock options may help increase retention.
+- Stock level 3 (17.65%) is somewhat higher than levels 1 and 2, which could reflect a small sample size (85 employees), or that other factors beyond stock options (like role or satisfaction) affect turnover at this level.
