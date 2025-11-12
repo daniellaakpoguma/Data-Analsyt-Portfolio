@@ -1,7 +1,7 @@
 # HR Attrition Analysis
 Employee turnover is a major cost for organisations. Understanding which employees are at higher risk of leaving allows HR to implement targeted retention strategies. This project aims to do just that by calculating the rate at which employees leave an organisation and identifying the possible underlying reasons for their departure.
 
-![Cover Image](Attrition Analysis/images/cover_image.png)
+![Cover Image](Attrition%20Analysis/images/cover_image.png)
 
 ## Data Description
 - Source: Kaggle (https://www.kaggle.com/datasets/rishikeshkonapure/hr-analytics-prediction)
