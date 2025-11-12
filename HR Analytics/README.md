@@ -142,7 +142,6 @@ FROM hr_employee_attrition
 GROUP BY EducationField;
 ```
 
-
 ## Attrition Analysis
 In this section, we dive deeper into the dataset by examining individual variables that may influence employee attrition. By analysing one variable at a time, we aim to identify patterns and potential risk factors that could contribute to an employee’s decision to leave the company.
 
@@ -253,27 +252,78 @@ FROM hr_employee_attrition
 GROUP BY Attrition, JobLevel
 ORDER BY JobLevel, Attrition ASC;
 ```
-1: (143/543)*100 = 26.34%
-2: (52/534)*100 = 9.74%
-3: (32/218)*100 = 14.68%
-4: (5/106)*100 = 4.72%
-5: (5/69)*100 = 7.25%
+1. 1: (143/543)*100 = 26.34%
+2. 2: (52/534)*100 = 9.74%
+3. 3: (32/218)*100 = 14.68%
+4. 4: (5/106)*100 = 4.72%
+5. 5: (5/69)*100 = 7.25%
 - Job Level 1 (26.34%) shows the highest attrition rate, indicating that entry-level employees are the most likely to leave, often due to limited experience, lower pay, or seeking better career opportunities.
 - Job Level 2 (9.74%) and Level 3 (14.68%) have moderate attrition, suggesting that as employees gain experience, turnover decreases but may still occur due to career advancement or job dissatisfaction.
 - Job Levels 4 (4.72%) and 5 (7.25%) have the lowest attrition, showing that senior and management-level employees tend to stay longer, likely due to higher job security, satisfaction, and organizational commitment.
 
-
 #### Employee Attrition by Job Involvement
-1: 83 employees. 3.74:1.90 = 1.97
-2: 375 employees. 20.68:4.83 = 4.28
-3: 868 employees. 50.54:8.50 = 5.95
-4: 144 employees. 8.91:0.88 = 10.125 
-
-i think i did the wrong thing. and smaller values are considered employees leaving faster. i shoud use (left/total in that level)
-
+In this analysis, we examine attrition rates based on job involvement to identify whether there are differences in turnover between employees of different job involvement levels
 ```sql
 SELECT JobInvolvement, Attrition, Count(*) AS employee_count, ROUND(COUNT(*) * 100.0 / (SELECT total_employees FROM total_employees), 2) AS percentage
 FROM hr_employee_attrition
 GROUP BY Attrition, JobInvolvement
 ORDER BY JobInvolvement, Attrition ASC;
 ```
+1. 1: (28/83)*100 = 33.73%
+2. 2: (71/375)*100 = 18.93%
+3. 3: (125/868)*100 = 14.40%
+4. 4: (13/144)*100 = 9.03%
+- Job Involvement Level 1 (33.73%) has the highest attrition rate, showing that employees with the lowest engagement are much more likely to leave. Low involvement often reflects weak connection to the job, low motivation, or lack of satisfaction.
+- Levels 2 (18.93%) and 3 (14.40%) show moderate attrition, suggesting that as job involvement increases, turnover decreases.
+- Level 4 (9.03%) has the lowest attrition rate, indicating that highly involved employees are the most likely to stay, likely because they are more motivated, satisfied, and committed to their roles.
+
+#### Employee Attrition by Job Satisfaction
+In this analysis, we examine attrition rates based on job satisfaction to identify whether there are differences in turnover between employees of different job satisfaction levels
+```sql
+SELECT JobSatisfaction, Attrition, Count(*) AS employee_count, ROUND(COUNT(*) * 100.0 / (SELECT total_employees FROM total_employees), 2) AS percentage
+FROM hr_employee_attrition
+GROUP BY Attrition, JobSatisfaction
+ORDER BY JobSatisfaction, Attrition ASC;
+```
+1. 1: (66/289)*100 = 22.84%
+2. 2: (46/280)*100 = 16.43%
+3. 3: (73/442)*100 = 16.52%
+4. 4: (52/459)*100 = 11.33%
+- Job Satisfaction Level 1 (22.84%) has the highest attrition rate, showing that employees who are least satisfied with their jobs are the most likely to leave.
+- Levels 2 (16.43%) and 3 (16.52%) show moderate attrition, suggesting that while somewhat satisfied employees are less likely to leave, there is still a notable risk of turnover if their needs aren’t met.
+- Level 4 (11.33%) has the lowest attrition rate, indicating that highly satisfied employees are the most stable and committed to the organization.
+
+### Financial Info
+#### Employee Attrition by Monthly Income
+In this analysis, we examine attrition rates based on monthly income.
+```sql
+CREATE OR REPLACE VIEW income_groups AS
+SELECT
+    EmployeeNumber,
+    MonthlyIncome,
+    Attrition,
+    CASE
+        WHEN MonthlyIncome BETWEEN 1000 AND 4999 THEN 'Low'
+        WHEN MonthlyIncome BETWEEN 5000 AND 9999 THEN 'Medium'
+        WHEN MonthlyIncome BETWEEN 10000 AND 14999 THEN 'High'
+        WHEN MonthlyIncome BETWEEN 15000 AND 20000 THEN 'Very High'
+        ELSE 'Other'
+    END AS income_group
+FROM hr_employee_attrition;
+
+SELECT
+    income_group,
+    COUNT(*) AS employee_count,
+    SUM(CASE WHEN Attrition = 'Yes' THEN 1 ELSE 0 END) AS attrition_count,
+    ROUND(SUM(CASE WHEN Attrition = 'Yes' THEN 1 ELSE 0 END) * 100.0 / COUNT(*), 2) AS attrition_percentage
+FROM income_groups
+GROUP BY income_group
+ORDER BY attrition_percentage DESC;
+```
+1. Low: 21.76%
+2. Medium: 13.51%
+3. High: 11.14%
+4. Very High: 3.76%
+- Low income (21.76%) has the highest attrition rate, suggesting that employees with lower pay are more likely to leave, possibly due to financial pressures or the pursuit of better-paying opportunities.
+- Medium income (13.51%) and High income (11.14%) show moderate attrition, indicating that as monthly income increases, employees are generally more likely to stay.
+- Very High income (3.76%) has the lowest attrition, reflecting that employees with the highest earnings are the most stable and committed, likely due to strong compensation and benefits.
